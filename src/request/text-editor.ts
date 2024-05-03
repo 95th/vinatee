@@ -17,6 +17,6 @@ export class TextEditor extends MobxLitElement {
   }
 
   onChange(event: CustomEvent<string>) {
-    this.body.setJson(event.detail);
+    this.body.setText(event.detail);
   }
 }
