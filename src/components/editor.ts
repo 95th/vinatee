@@ -65,7 +65,7 @@ export class VinEditor extends LitElement {
     super.updated(changedProperties);
     if (
       changedProperties.has("value") &&
-      this._editorView?.state.doc.length !== this.value.length
+      this._editorView?.state.doc.toString() !== this.value
     ) {
       this._editorView?.dispatch({
         changes: {
