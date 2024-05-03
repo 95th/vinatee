@@ -10,7 +10,7 @@ import "@vaadin/vertical-layout";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { CheckboxCheckedChangedEvent } from "@vaadin/checkbox";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
-import { PropertyValueMap, html } from "lit";
+import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Properties, Property } from "../request/state.js";
 
@@ -19,31 +19,12 @@ export class PropertiesPanel extends MobxLitElement {
   @property({ attribute: false })
   properties!: Properties;
 
-  protected updated(
-    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
-    super.updated(changedProperties);
+  render() {
     if (this.properties.entries.length === 0) {
       this.properties.add();
     }
-  }
-
-  render() {
     return html`
       <vaadin-vertical-layout theme="spacing-xs" style="align-items: stretch">
-        <vaadin-horizontal-layout
-          theme="spacing-s"
-          style="justify-content: end"
-        >
-          <vaadin-button theme="tertiary" @click=${this.onDeleteAll}>
-            <vaadin-icon icon="vaadin:trash" slot="prefix"></vaadin-icon>
-            Delete all
-          </vaadin-button>
-          <vaadin-button theme="tertiary" @click=${this.onAdd}>
-            <vaadin-icon icon="vaadin:plus" slot="prefix"></vaadin-icon>
-            Add
-          </vaadin-button>
-        </vaadin-horizontal-layout>
         ${this.renderPropertyRows()}
       </vaadin-vertical-layout>
     `;
@@ -63,21 +44,42 @@ export class PropertiesPanel extends MobxLitElement {
     );
   }
 
-  private onAdd() {
-    this.properties.add();
-  }
-
   private onChange(event: PropertyChangedEvent) {
     const { index, property } = event.detail;
     this.properties.update(index, property);
   }
 
-  private onDeleteAll() {
-    this.properties.deleteAll();
-  }
-
   private onDelete(event: DeletePropertyEvent) {
     this.properties.delete(event.detail.index);
+  }
+}
+
+@customElement("properties-controls")
+export class PropertiesControls extends MobxLitElement {
+  @property({ attribute: false })
+  properties!: Properties;
+
+  render() {
+    return html`
+      <vaadin-horizontal-layout theme="spacing-s" style="justify-content: end">
+        <vaadin-button theme="tertiary" @click=${this.onDeleteAll}>
+          <vaadin-icon icon="vaadin:trash" slot="prefix"></vaadin-icon>
+          Delete all
+        </vaadin-button>
+        <vaadin-button theme="tertiary" @click=${this.onAdd}>
+          <vaadin-icon icon="vaadin:plus" slot="prefix"></vaadin-icon>
+          Add
+        </vaadin-button>
+      </vaadin-horizontal-layout>
+    `;
+  }
+
+  private onAdd() {
+    this.properties.add();
+  }
+
+  private onDeleteAll() {
+    this.properties.deleteAll();
   }
 }
 

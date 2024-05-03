@@ -33,17 +33,30 @@ export class RequestBody extends MobxLitElement {
           .value=${this.body.type}
           @value-changed=${this.onBodyTypeChange}
         ></vaadin-select>
-        ${this.body.type === RequestBodyType.json
-          ? html`<vaadin-button theme="tertiary" @click=${this.onJsonPrettify}>
-              <vaadin-tooltip slot="tooltip" text="Prettify"></vaadin-tooltip>
-              <vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>
-              Prettify
-            </vaadin-button>`
-          : nothing}
+        ${this.renderControls()}
       </vaadin-horizontal-layout>
 
       ${this.renderBody()}
     </vaadin-vertical-layout>`;
+  }
+
+  private renderControls() {
+    switch (this.body.type) {
+      case RequestBodyType.json:
+        return html`<vaadin-button
+          theme="tertiary"
+          @click=${this.onJsonPrettify}
+        >
+          <vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>
+          Prettify
+        </vaadin-button>`;
+      case RequestBodyType.urlEncoded:
+        return html`<properties-controls
+          .properties=${this.body.urlEncoded}
+        ></properties-controls>`;
+      default:
+        nothing;
+    }
   }
 
   private renderBody() {
