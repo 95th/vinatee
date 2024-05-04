@@ -19,7 +19,7 @@ export class PropertiesPanel extends MobxLitElement {
     @property({ attribute: false })
     properties!: Properties;
 
-    protected willUpdate(
+    protected override willUpdate(
         _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
     ): void {
         if (this.properties.entries.length === 0) {
@@ -27,7 +27,7 @@ export class PropertiesPanel extends MobxLitElement {
         }
     }
 
-    render() {
+    override render() {
         return html`
             <vaadin-vertical-layout
                 theme="spacing-xs"
@@ -67,7 +67,7 @@ export class PropertiesControls extends MobxLitElement {
     @property({ attribute: false })
     properties!: Properties;
 
-    render() {
+    override render() {
         return html`
             <vaadin-horizontal-layout
                 theme="spacing-s"
@@ -105,7 +105,7 @@ export class PropertyRow extends MobxLitElement {
     @property({ type: Number })
     index!: number;
 
-    render() {
+    override render() {
         return html`
             <vaadin-horizontal-layout theme="spacing-s">
                 <vaadin-checkbox

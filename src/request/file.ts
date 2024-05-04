@@ -17,7 +17,7 @@ export class FileBody extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <vaadin-horizontal-layout theme="spacing-s">
                 <vaadin-button theme="secondary" @click=${this.selectFile}>

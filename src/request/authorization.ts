@@ -22,7 +22,7 @@ export class RequestAuthorization extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`<vaadin-vertical-layout style="align-items: stretch">
             <vaadin-horizontal-layout>
                 <vaadin-select

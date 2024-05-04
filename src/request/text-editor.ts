@@ -12,7 +12,7 @@ export class TextEditor extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <vin-editor
                 value=${this.state.body.text}
@@ -21,7 +21,7 @@ export class TextEditor extends MobxLitElement {
         `;
     }
 
-    onChange(event: CustomEvent<string>) {
+    private onChange(event: CustomEvent<string>) {
         this.state.body.setText(event.detail);
     }
 }

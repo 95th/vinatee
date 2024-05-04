@@ -32,7 +32,7 @@ export class UrlBar extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <vaadin-horizontal-layout theme="spacing">
                 <vaadin-select
@@ -56,15 +56,15 @@ export class UrlBar extends MobxLitElement {
         `;
     }
 
-    onMethodChange(e: SelectValueChangedEvent) {
+    private onMethodChange(e: SelectValueChangedEvent) {
         this.state.setMethod(e.detail.value);
     }
 
-    onUrlChange(e: TextFieldValueChangedEvent) {
+    private onUrlChange(e: TextFieldValueChangedEvent) {
         this.state.setUrl(e.detail.value);
     }
 
-    onSend() {
+    private onSend() {
         this.dispatchEvent(new SendEvent());
     }
 }

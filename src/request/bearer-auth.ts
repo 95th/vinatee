@@ -13,7 +13,7 @@ export class BearerAuth extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <vaadin-text-area
                 style="width:100%"

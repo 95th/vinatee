@@ -14,7 +14,7 @@ export class BasicAuth extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`<vaadin-vertical-layout style="align-items: stretch">
             <vaadin-text-field
                 label="Username"

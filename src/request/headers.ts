@@ -11,7 +11,7 @@ export class RequestHeaders extends LitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <properties-panel
                 .properties=${this.state.headers}

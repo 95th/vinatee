@@ -14,7 +14,7 @@ export class VinateeApp extends MobxLitElement {
     @state()
     private requestState = new RequestState();
 
-    render() {
+    override render() {
         return html`<vaadin-vertical-layout
             theme="spacing padding"
             style="align-items: stretch"
@@ -24,7 +24,7 @@ export class VinateeApp extends MobxLitElement {
         </vaadin-vertical-layout>`;
     }
 
-    onSend() {
+    private onSend() {
         console.log("Send request");
         console.log(this.requestState.method, this.requestState.url);
 

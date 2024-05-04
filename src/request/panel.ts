@@ -21,7 +21,7 @@ export class RequestProperties extends MobxLitElement {
     @state()
     private selectedTabIndex = 0;
 
-    render() {
+    override render() {
         return html`<vaadin-tabsheet>
             <vaadin-tabs slot="tabs" @selected-changed=${this.onTabChange}>
                 <vaadin-tab id="query-params-tab">Parameters</vaadin-tab>

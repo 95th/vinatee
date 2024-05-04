@@ -12,7 +12,7 @@ export class JsonEditor extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <vin-editor
                 value=${this.state.body.json}
@@ -22,7 +22,7 @@ export class JsonEditor extends MobxLitElement {
         `;
     }
 
-    onChange(event: CustomEvent<string>) {
+    private onChange(event: CustomEvent<string>) {
         this.state.body.setJson(event.detail);
     }
 }

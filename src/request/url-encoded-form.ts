@@ -12,7 +12,7 @@ export class UrlEncodedForm extends MobxLitElement {
     @state()
     private state!: RequestState;
 
-    render() {
+    override render() {
         return html`
             <properties-panel
                 .properties=${this.state.body.urlEncoded}

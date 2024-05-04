@@ -8,7 +8,7 @@ import { customElement, property, queryAsync } from "lit/decorators.js";
 
 @customElement("vin-editor")
 export class VinEditor extends LitElement {
-    static styles = css`
+    static override styles = css`
         .cm-editor,
         .cm-editor.cm-focused {
             outline: none;
@@ -31,7 +31,7 @@ export class VinEditor extends LitElement {
 
     private _editorView?: EditorView;
 
-    override async connectedCallback(): Promise<void> {
+    override connectedCallback(): void {
         super.connectedCallback();
         this.editorContainer.then((c) => this.initEditor(c));
     }
@@ -63,12 +63,12 @@ export class VinEditor extends LitElement {
         });
     }
 
-    protected override updated(
-        changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    protected override willUpdate(
+        changedProps: PropertyValueMap<any> | Map<PropertyKey, unknown>
     ): void {
-        super.updated(changedProperties);
+        super.willUpdate(changedProps);
         if (
-            changedProperties.has("value") &&
+            changedProps.has("value") &&
             this._editorView?.state.doc.toString() !== this.value
         ) {
             this._editorView?.dispatch({
@@ -85,7 +85,7 @@ export class VinEditor extends LitElement {
         return html`<div id="editor-container"></div>`;
     }
 
-    onChange(newValue: string) {
+    private onChange(newValue: string) {
         this.dispatchEvent(
             new CustomEvent<string>("change", {
                 detail: newValue,
