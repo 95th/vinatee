@@ -5,15 +5,17 @@ import "@vaadin/icon";
 import "@vaadin/icons";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { consume } from "@lit/context";
 import { open } from "@tauri-apps/api/dialog";
 import { html, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { RequestBodyState } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { RequestState, requestContext } from "./state.js";
 
 @customElement("file-body")
 export class FileBody extends MobxLitElement {
-  @property({ attribute: false })
-  body!: RequestBodyState;
+  @consume({ context: requestContext })
+  @state()
+  private state!: RequestState;
 
   render() {
     return html`
@@ -28,11 +30,11 @@ export class FileBody extends MobxLitElement {
   }
 
   private renderFile() {
-    if (!this.body.file) {
+    if (!this.state.body.file) {
       return nothing;
     }
 
-    const filename = this.body.file.split("/").pop();
+    const filename = this.state.body.file.split("/").pop();
 
     return html`
       <vaadin-horizontal-layout theme="spacing-s">
@@ -47,11 +49,11 @@ export class FileBody extends MobxLitElement {
   private async selectFile() {
     const selected = await open({ multiple: false });
     if (selected) {
-      this.body.setFile(selected as string);
+      this.state.body.setFile(selected as string);
     }
   }
 
   private clearFile() {
-    this.body.setFile("");
+    this.state.body.setFile("");
   }
 }

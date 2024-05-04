@@ -1,4 +1,9 @@
+import { createContext } from "@lit/context";
 import { action, makeObservable, observable } from "mobx";
+
+export const requestContext = createContext<RequestState>(
+  Symbol("request-context")
+);
 
 export interface Property {
   name: string;

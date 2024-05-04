@@ -3,12 +3,15 @@ import "./request/panel.js";
 import "./request/url_bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { provide } from "@lit/context";
 import { html } from "lit";
-import { customElement } from "lit/decorators.js";
-import { Properties, RequestState } from "./request/state.js";
+import { customElement, state } from "lit/decorators.js";
+import { Properties, RequestState, requestContext } from "./request/state.js";
 
 @customElement("vin-app")
 export class VinateeApp extends MobxLitElement {
+  @provide({ context: requestContext })
+  @state()
   private requestState = new RequestState();
 
   render() {
@@ -16,8 +19,8 @@ export class VinateeApp extends MobxLitElement {
       theme="spacing padding"
       style="align-items: stretch"
     >
-      <url-bar .state=${this.requestState} @send=${this.onSend}></url-bar>
-      <request-properties .state=${this.requestState}></request-properties>
+      <url-bar @send=${this.onSend}></url-bar>
+      <request-properties></request-properties>
     </vaadin-vertical-layout>`;
   }
 

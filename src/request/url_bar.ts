@@ -4,11 +4,12 @@ import "@vaadin/select";
 import "@vaadin/text-field";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
 import { html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { RequestState } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { RequestState, requestContext } from "./state.js";
 
 const methods = [
   "GET",
@@ -27,8 +28,9 @@ const methods = [
 
 @customElement("url-bar")
 export class UrlBar extends MobxLitElement {
-  @property({ attribute: false })
-  state!: RequestState;
+  @consume({context: requestContext })
+  @state()
+  private state!: RequestState;
 
   render() {
     return html`

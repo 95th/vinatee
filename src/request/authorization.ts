@@ -1,14 +1,15 @@
+import "@vaadin/horizontal-layout";
 import "@vaadin/select";
 import "@vaadin/vertical-layout";
-import "@vaadin/horizontal-layout";
-import "./bearer-auth.js";
 import "./basic-auth.js";
+import "./bearer-auth.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { html, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { AuthorizationState, AuthorizationType } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { AuthorizationType, RequestState, requestContext } from "./state.js";
 
 const authTypes = Object.values(AuthorizationType).map((type) => ({
   label: type,
@@ -17,15 +18,16 @@ const authTypes = Object.values(AuthorizationType).map((type) => ({
 
 @customElement("request-auth")
 export class RequestAuthorization extends MobxLitElement {
-  @property({ attribute: false })
-  auth!: AuthorizationState;
+  @consume({ context: requestContext })
+  @state()
+  private state!: RequestState;
 
   render() {
     return html`<vaadin-vertical-layout style="align-items: stretch">
       <vaadin-horizontal-layout>
         <vaadin-select
           .items=${authTypes}
-          .value=${this.auth.type}
+          .value=${this.state.authorization.type}
           @value-changed=${this.onAuthTypeChange}
         ></vaadin-select>
       </vaadin-horizontal-layout>
@@ -35,11 +37,11 @@ export class RequestAuthorization extends MobxLitElement {
   }
 
   private renderAuthBody() {
-    switch (this.auth.type) {
+    switch (this.state.authorization.type) {
       case AuthorizationType.bearer:
-        return html`<bearer-auth .auth=${this.auth}></bearer-auth>`;
+        return html`<bearer-auth></bearer-auth>`;
       case AuthorizationType.basic:
-        return html`<basic-auth .auth=${this.auth}></basic-auth>`;
+        return html`<basic-auth></basic-auth>`;
       default:
         return nothing;
     }
@@ -47,6 +49,6 @@ export class RequestAuthorization extends MobxLitElement {
 
   private onAuthTypeChange(event: SelectValueChangedEvent) {
     const type = event.detail.value as AuthorizationType;
-    this.auth.setType(type);
+    this.state.authorization.setType(type);
   }
 }
