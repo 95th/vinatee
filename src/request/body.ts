@@ -65,7 +65,7 @@ export class RequestBody extends MobxLitElement {
                             @click=${this.onJsonMinify}
                         >
                             <vaadin-icon
-                                icon="vaadin:compress"
+                                icon="vaadin:compress-square"
                                 slot="prefix"
                             ></vaadin-icon>
                             Minify
