@@ -13,8 +13,8 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
-import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { LitElement, html, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
@@ -51,62 +51,41 @@ export class RequestBody extends MobxLitElement {
     private renderControls() {
         switch (this.state.body.type) {
             case RequestBodyType.json:
-                return html`
-                    <vaadin-horizontal-layout
-                        theme="spacing"
-                        style="justify-content: flex-end"
-                    >
-                        <vaadin-button
-                            theme="tertiary"
-                            @click=${this.onJsonPrettify}
-                        >
-                            <vaadin-icon
-                                icon="vaadin:magic"
-                                slot="prefix"
-                            ></vaadin-icon>
-                            Prettify
-                        </vaadin-button>
-                        <vaadin-button
-                            theme="tertiary"
-                            @click=${this.onJsonMinify}
-                        >
-                            <vaadin-icon
-                                icon="vaadin:compress-square"
-                                slot="prefix"
-                            ></vaadin-icon>
-                            Minify
-                        </vaadin-button>
-                        <vaadin-button
-                            theme="tertiary"
-                            @click=${this.onJsonWrapToggle}
-                        >
-                            <vaadin-icon
-                                icon=${this.wrapJsonLines
-                                    ? "vaadin:check-square-o"
-                                    : "vaadin:thin-square"}
-                                slot="prefix"
-                            ></vaadin-icon>
-                            Wrap Lines
-                        </vaadin-button>
-                    </vaadin-horizontal-layout>
-                `;
-            case RequestBodyType.text:
-                return html` <vaadin-horizontal-layout
+                return html`<vaadin-horizontal-layout
                     theme="spacing"
                     style="justify-content: flex-end"
                 >
                     <vaadin-button
                         theme="tertiary"
-                        @click=${this.onTextWrapToggle}
+                        @click=${this.onJsonPrettify}
                     >
                         <vaadin-icon
-                            icon=${this.wrapTextLines
-                                ? "vaadin:check-square-o"
-                                : "vaadin:thin-square"}
+                            icon="vaadin:magic"
                             slot="prefix"
                         ></vaadin-icon>
-                        Wrap Lines
+                        Prettify
                     </vaadin-button>
+                    <vaadin-button theme="tertiary" @click=${this.onJsonMinify}>
+                        <vaadin-icon
+                            icon="vaadin:compress-square"
+                            slot="prefix"
+                        ></vaadin-icon>
+                        Minify
+                    </vaadin-button>
+                    <line-wrap-button
+                        .value=${this.wrapJsonLines}
+                        @toggle=${this.onJsonWrapToggle}
+                    ></line-wrap-button>
+                </vaadin-horizontal-layout>`;
+            case RequestBodyType.text:
+                return html`<vaadin-horizontal-layout
+                    theme="spacing"
+                    style="justify-content: flex-end"
+                >
+                    <line-wrap-button
+                        .value=${this.wrapTextLines}
+                        @toggle=${this.onTextWrapToggle}
+                    ></line-wrap-button>
                 </vaadin-horizontal-layout>`;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
@@ -169,5 +148,27 @@ export class RequestBody extends MobxLitElement {
 
     private onTextWrapToggle() {
         this.wrapTextLines = !this.wrapTextLines;
+    }
+}
+
+@customElement("line-wrap-button")
+export class LineWrapButton extends LitElement {
+    @property()
+    value = false;
+
+    override render() {
+        return html`<vaadin-button theme="tertiary" @click=${this.onWrapToggle}>
+            <vaadin-icon
+                icon=${this.value
+                    ? "vaadin:check-square-o"
+                    : "vaadin:thin-square"}
+                slot="prefix"
+            ></vaadin-icon>
+            Wrap Lines
+        </vaadin-button>`;
+    }
+
+    private onWrapToggle() {
+        this.dispatchEvent(new CustomEvent("toggle"));
     }
 }
