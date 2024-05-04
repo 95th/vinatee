@@ -86,17 +86,17 @@ export class VinEditor extends LitElement {
     }
 
     private onChange(newValue: string) {
-        this.dispatchEvent(
-            new CustomEvent<string>("change", {
-                detail: newValue,
-                bubbles: true,
-                composed: true,
-            })
-        );
+        this.dispatchEvent(new EditorTextChangedEvent(newValue));
     }
 
     override disconnectedCallback(): void {
         this._editorView?.destroy();
         super.disconnectedCallback();
+    }
+}
+
+export class EditorTextChangedEvent extends CustomEvent<string> {
+    constructor(text: string) {
+        super("change", { detail: text });
     }
 }
