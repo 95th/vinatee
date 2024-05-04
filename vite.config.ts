@@ -15,4 +15,24 @@ export default defineConfig(async () => ({
             ignored: ["**/src-tauri/**"],
         },
     },
+    build: {
+        chunkSizeWarningLimit: 600,
+        rollupOptions: {
+            output: {
+                manualChunks: (id: string) => {
+                    if (id.includes("@vaadin")) {
+                        return "vendor-vaadin";
+                    }
+
+                    if (id.includes("lit") || id.includes("mobx")) {
+                        return "vendor-lit-mobx";
+                    }
+
+                    if (id.includes("codemirror")) {
+                        return "vendor-editor";
+                    }
+                },
+            },
+        },
+    },
 }));
