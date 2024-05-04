@@ -1,11 +1,12 @@
 import "../components/editor.js";
 
-import { LitElement, html } from "lit";
+import { MobxLitElement } from "@adobe/lit-mobx";
+import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { RequestBodyState } from "./state.js";
 
 @customElement("text-editor")
-export class TextEditor extends LitElement {
+export class TextEditor extends MobxLitElement {
   @property({ attribute: false })
   body!: RequestBodyState;
 
