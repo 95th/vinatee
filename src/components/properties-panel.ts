@@ -10,7 +10,7 @@ import "@vaadin/vertical-layout";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { CheckboxCheckedChangedEvent } from "@vaadin/checkbox";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
-import { html } from "lit";
+import { PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Properties, Property } from "../request/state.js";
 
@@ -19,10 +19,15 @@ export class PropertiesPanel extends MobxLitElement {
   @property({ attribute: false })
   properties!: Properties;
 
-  render() {
+  protected willUpdate(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
     if (this.properties.entries.length === 0) {
       this.properties.add();
     }
+  }
+
+  render() {
     return html`
       <vaadin-vertical-layout theme="spacing-xs" style="align-items: stretch">
         ${this.renderPropertyRows()}

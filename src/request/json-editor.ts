@@ -1,12 +1,11 @@
 import "../components/editor.js";
 
-import { MobxLitElement } from "@adobe/lit-mobx";
-import { html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { RequestBodyState } from "./state.js";
 
 @customElement("json-editor")
-export class JsonEditor extends MobxLitElement {
+export class JsonEditor extends LitElement {
   @property({ attribute: false })
   body!: RequestBodyState;
 
