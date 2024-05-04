@@ -13,7 +13,7 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
@@ -24,7 +24,6 @@ const bodyTypes = Object.values(RequestBodyType).map((type) => ({
 @customElement("request-body")
 export class RequestBody extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {

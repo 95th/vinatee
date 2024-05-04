@@ -5,13 +5,12 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
 @customElement("basic-auth")
 export class BasicAuth extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {

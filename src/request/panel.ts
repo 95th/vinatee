@@ -15,7 +15,6 @@ import { RequestState, requestContext } from "./state.js";
 @customElement("request-properties")
 export class RequestProperties extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     @state()

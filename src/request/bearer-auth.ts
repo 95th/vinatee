@@ -4,13 +4,12 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TextAreaValueChangedEvent } from "@vaadin/text-area";
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
 @customElement("bearer-auth")
 export class BearerAuth extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {

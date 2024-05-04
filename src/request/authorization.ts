@@ -8,7 +8,7 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { AuthorizationType, RequestState, requestContext } from "./state.js";
 
 const authTypes = Object.values(AuthorizationType).map((type) => ({
@@ -19,7 +19,6 @@ const authTypes = Object.values(AuthorizationType).map((type) => ({
 @customElement("request-auth")
 export class RequestAuthorization extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {

@@ -8,13 +8,12 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { open } from "@tauri-apps/api/dialog";
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
 @customElement("file-body")
 export class FileBody extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {
