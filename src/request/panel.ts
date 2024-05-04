@@ -6,15 +6,17 @@ import "./headers.js";
 import "./query-params.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
 import { html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { RequestState } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { RequestState, requestContext } from "./state.js";
 
 @customElement("request-properties")
 export class RequestProperties extends MobxLitElement {
-  @property({ attribute: false })
-  state!: RequestState;
+  @consume({ context: requestContext })
+  @state()
+  private state!: RequestState;
 
   @state()
   private selectedTabIndex = 0;
@@ -30,22 +32,10 @@ export class RequestProperties extends MobxLitElement {
 
       ${this.renderControls()}
 
-      <query-params
-        tab="query-params-tab"
-        .params=${this.state.params}
-      ></query-params>
-
-      <request-body tab="body-tab" .body=${this.state.body}></request-body>
-
-      <request-headers
-        tab="headers-tab"
-        .headers=${this.state.headers}
-      ></request-headers>
-
-      <request-auth
-        tab="auth-tab"
-        .auth=${this.state.authorization}
-      ></request-auth>
+      <query-params tab="query-params-tab"></query-params>
+      <request-body tab="body-tab"></request-body>
+      <request-headers tab="headers-tab"></request-headers>
+      <request-auth tab="auth-tab"></request-auth>
     </vaadin-tabsheet>`;
   }
 

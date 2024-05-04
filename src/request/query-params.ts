@@ -1,17 +1,19 @@
 import "../components/properties-panel.js";
 
+import { consume } from "@lit/context";
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { Properties } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { RequestState, requestContext } from "./state.js";
 
 @customElement("query-params")
 export class QueryParameters extends LitElement {
-  @property({ attribute: false })
-  params!: Properties;
+  @consume({ context: requestContext })
+  @state()
+  private state!: RequestState;
 
   render() {
     return html`
-      <properties-panel .properties=${this.params}></properties-panel>
+      <properties-panel .properties=${this.state.params}></properties-panel>
     `;
   }
 }

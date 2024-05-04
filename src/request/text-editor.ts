@@ -1,22 +1,27 @@
 import "../components/editor.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { consume } from "@lit/context";
 import { html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { RequestBodyState } from "./state.js";
+import { customElement, state } from "lit/decorators.js";
+import { RequestState, requestContext } from "./state.js";
 
 @customElement("text-editor")
 export class TextEditor extends MobxLitElement {
-  @property({ attribute: false })
-  body!: RequestBodyState;
+  @consume({ context: requestContext })
+  @state()
+  private state!: RequestState;
 
   render() {
     return html`
-      <vin-editor value=${this.body.text} @change=${this.onChange}></vin-editor>
+      <vin-editor
+        value=${this.state.body.text}
+        @change=${this.onChange}
+      ></vin-editor>
     `;
   }
 
   onChange(event: CustomEvent<string>) {
-    this.body.setText(event.detail);
+    this.state.body.setText(event.detail);
   }
 }
