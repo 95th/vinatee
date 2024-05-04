@@ -78,15 +78,10 @@ export class RequestBody extends MobxLitElement {
                     ></line-wrap-button>
                 </vaadin-horizontal-layout>`;
             case RequestBodyType.text:
-                return html`<vaadin-horizontal-layout
-                    theme="spacing"
-                    style="justify-content: flex-end"
-                >
-                    <line-wrap-button
-                        .value=${this.wrapTextLines}
-                        @toggle=${this.onTextWrapToggle}
-                    ></line-wrap-button>
-                </vaadin-horizontal-layout>`;
+                return html`<line-wrap-button
+                    .value=${this.wrapTextLines}
+                    @toggle=${this.onTextWrapToggle}
+                ></line-wrap-button>`;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
                     .properties=${this.state.body.urlEncoded}
