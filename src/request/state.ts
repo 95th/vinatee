@@ -49,7 +49,7 @@ export class RequestBodyState {
   type = RequestBodyType.none;
 
   @observable
-  json = JSON.stringify({ hello: "world", foo: [1, 2, 3] });
+  json = "";
 
   @observable
   text = "";

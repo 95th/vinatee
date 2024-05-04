@@ -1,12 +1,11 @@
 import "../components/properties-panel.js";
 
-import { MobxLitElement } from "@adobe/lit-mobx";
-import { html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Properties } from "./state.js";
 
 @customElement("query-params")
-export class QueryParameters extends MobxLitElement {
+export class QueryParameters extends LitElement {
   @property({ attribute: false })
   params!: Properties;
 
