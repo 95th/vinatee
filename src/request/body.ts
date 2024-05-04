@@ -28,10 +28,7 @@ export class RequestBody extends MobxLitElement {
     private state!: RequestState;
 
     @state()
-    wrapJsonLines = false;
-
-    @state()
-    wrapTextLines = false;
+    wrapLines = false;
 
     override render() {
         return html`<vaadin-vertical-layout style="align-items: stretch">
@@ -73,14 +70,14 @@ export class RequestBody extends MobxLitElement {
                         Minify
                     </vaadin-button>
                     <line-wrap-button
-                        .value=${this.wrapJsonLines}
-                        @toggle=${this.onJsonWrapToggle}
+                        .value=${this.wrapLines}
+                        @toggle=${this.onWrapLinesToggle}
                     ></line-wrap-button>
                 </vaadin-horizontal-layout>`;
             case RequestBodyType.text:
                 return html`<line-wrap-button
-                    .value=${this.wrapTextLines}
-                    @toggle=${this.onTextWrapToggle}
+                    .value=${this.wrapLines}
+                    @toggle=${this.onWrapLinesToggle}
                 ></line-wrap-button>`;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
@@ -97,11 +94,11 @@ export class RequestBody extends MobxLitElement {
                 return html`<url-encoded-form></url-encoded-form>`;
             case RequestBodyType.json:
                 return html`<json-editor
-                    .wrapLines=${this.wrapJsonLines}
+                    .wrapLines=${this.wrapLines}
                 ></json-editor>`;
             case RequestBodyType.text:
                 return html`<text-editor
-                    .wrapLines=${this.wrapTextLines}
+                    .wrapLines=${this.wrapLines}
                 ></text-editor>`;
             case RequestBodyType.file:
                 return html`<file-body></file-body>`;
@@ -137,12 +134,8 @@ export class RequestBody extends MobxLitElement {
         }
     }
 
-    private onJsonWrapToggle() {
-        this.wrapJsonLines = !this.wrapJsonLines;
-    }
-
-    private onTextWrapToggle() {
-        this.wrapTextLines = !this.wrapTextLines;
+    private onWrapLinesToggle() {
+        this.wrapLines = !this.wrapLines;
     }
 }
 
