@@ -8,20 +8,20 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("text-editor")
 export class TextEditor extends MobxLitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <vin-editor
-        value=${this.state.body.text}
-        @change=${this.onChange}
-      ></vin-editor>
-    `;
-  }
+    override render() {
+        return html`
+            <vin-editor
+                value=${this.state.body.text}
+                @change=${this.onChange}
+            ></vin-editor>
+        `;
+    }
 
-  onChange(event: CustomEvent<string>) {
-    this.state.body.setText(event.detail);
-  }
+    private onChange(event: CustomEvent<string>) {
+        this.state.body.setText(event.detail);
+    }
 }

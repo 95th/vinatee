@@ -17,77 +17,80 @@ import { customElement, state } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
-  label: type,
-  value: type,
+    label: type,
+    value: type,
 }));
 
 @customElement("request-body")
 export class RequestBody extends MobxLitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`<vaadin-vertical-layout style="align-items: stretch">
-      <vaadin-horizontal-layout style="justify-content: space-between">
-        <vaadin-select
-          .items=${bodyTypes}
-          .value=${this.state.body.type}
-          @value-changed=${this.onBodyTypeChange}
-        ></vaadin-select>
-        ${this.renderControls()}
-      </vaadin-horizontal-layout>
+    override render() {
+        return html`<vaadin-vertical-layout style="align-items: stretch">
+            <vaadin-horizontal-layout style="justify-content: space-between">
+                <vaadin-select
+                    .items=${bodyTypes}
+                    .value=${this.state.body.type}
+                    @value-changed=${this.onBodyTypeChange}
+                ></vaadin-select>
+                ${this.renderControls()}
+            </vaadin-horizontal-layout>
 
-      ${this.renderBody()}
-    </vaadin-vertical-layout>`;
-  }
-
-  private renderControls() {
-    switch (this.state.body.type) {
-      case RequestBodyType.json:
-        return html`<vaadin-button
-          theme="tertiary"
-          @click=${this.onJsonPrettify}
-        >
-          <vaadin-icon icon="vaadin:magic" slot="prefix"></vaadin-icon>
-          Prettify
-        </vaadin-button>`;
-      case RequestBodyType.urlEncoded:
-        return html`<properties-controls
-          .properties=${this.state.body.urlEncoded}
-        ></properties-controls>`;
-      default:
-        nothing;
+            ${this.renderBody()}
+        </vaadin-vertical-layout>`;
     }
-  }
 
-  private renderBody() {
-    switch (this.state.body.type) {
-      case RequestBodyType.urlEncoded:
-        return html`<url-encoded-form></url-encoded-form>`;
-      case RequestBodyType.json:
-        return html`<json-editor></json-editor>`;
-      case RequestBodyType.text:
-        return html`<text-editor></text-editor>`;
-      case RequestBodyType.file:
-        return html`<file-body></file-body>`;
-      default:
-        return nothing;
+    private renderControls() {
+        switch (this.state.body.type) {
+            case RequestBodyType.json:
+                return html`<vaadin-button
+                    theme="tertiary"
+                    @click=${this.onJsonPrettify}
+                >
+                    <vaadin-icon
+                        icon="vaadin:magic"
+                        slot="prefix"
+                    ></vaadin-icon>
+                    Prettify
+                </vaadin-button>`;
+            case RequestBodyType.urlEncoded:
+                return html`<properties-controls
+                    .properties=${this.state.body.urlEncoded}
+                ></properties-controls>`;
+            default:
+                nothing;
+        }
     }
-  }
 
-  private onBodyTypeChange(event: SelectValueChangedEvent) {
-    const type = event.detail.value as RequestBodyType;
-    this.state.body.setType(type);
-  }
-
-  private onJsonPrettify() {
-    const value = this.state.body.json;
-    try {
-      const json = JSON.parse(value);
-      this.state.body.setJson(JSON.stringify(json, null, 2));
-    } catch (error) {
-      console.error("Failed to prettify JSON", error);
+    private renderBody() {
+        switch (this.state.body.type) {
+            case RequestBodyType.urlEncoded:
+                return html`<url-encoded-form></url-encoded-form>`;
+            case RequestBodyType.json:
+                return html`<json-editor></json-editor>`;
+            case RequestBodyType.text:
+                return html`<text-editor></text-editor>`;
+            case RequestBodyType.file:
+                return html`<file-body></file-body>`;
+            default:
+                return nothing;
+        }
     }
-  }
+
+    private onBodyTypeChange(event: SelectValueChangedEvent) {
+        const type = event.detail.value as RequestBodyType;
+        this.state.body.setType(type);
+    }
+
+    private onJsonPrettify() {
+        const value = this.state.body.json;
+        try {
+            const json = JSON.parse(value);
+            this.state.body.setJson(JSON.stringify(json, null, 2));
+        } catch (error) {
+            console.error("Failed to prettify JSON", error);
+        }
+    }
 }

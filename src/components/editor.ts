@@ -8,91 +8,95 @@ import { customElement, property, queryAsync } from "lit/decorators.js";
 
 @customElement("vin-editor")
 export class VinEditor extends LitElement {
-  static styles = css`
-    .cm-editor,
-    .cm-editor.cm-focused {
-      outline: none;
-    }
-
-    .cm-content,
-    .cm-scroller {
-      font-family: Consolas, "SF Mono", "Fira Code", monospace;
-    }
-  `;
-
-  @property()
-  value = "";
-
-  @property()
-  language = "";
-
-  @queryAsync("#editor-container")
-  editorContainer!: Promise<HTMLElement>;
-
-  private _editorView?: EditorView;
-
-  override async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-    this.editorContainer.then((c) => this.initEditor(c));
-  }
-
-  private initEditor(parent: HTMLElement) {
-    const extensions = [
-      minimalSetup,
-      lineNumbers(),
-      codeFolding(),
-      foldGutter({
-        openText: "⯆",
-        closedText: "⯈",
-      }),
-      EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-          this.onChange(update.state.doc.toString());
+    static override styles = css`
+        .cm-editor,
+        .cm-editor.cm-focused {
+            outline: none;
         }
-      }),
-      // codeFolding(),
-      keymap.of([indentWithTab]),
-    ];
-    if (this.language === "json") {
-      extensions.push(json());
+
+        .cm-content,
+        .cm-scroller {
+            font-family: Consolas, "SF Mono", "Fira Code", monospace;
+        }
+    `;
+
+    @property()
+    value = "";
+
+    @property()
+    language = "";
+
+    @queryAsync("#editor-container")
+    editorContainer!: Promise<HTMLElement>;
+
+    private _editorView?: EditorView;
+
+    override connectedCallback(): void {
+        super.connectedCallback();
+        this.editorContainer.then((c) => this.initEditor(c));
     }
-    this._editorView = new EditorView({ doc: this.value, parent, extensions });
-  }
 
-  protected override updated(
-    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
-    super.updated(changedProperties);
-    if (
-      changedProperties.has("value") &&
-      this._editorView?.state.doc.toString() !== this.value
-    ) {
-      this._editorView?.dispatch({
-        changes: {
-          from: 0,
-          to: this._editorView.state.doc.length,
-          insert: this.value,
-        },
-      });
+    private initEditor(parent: HTMLElement) {
+        const extensions = [
+            minimalSetup,
+            lineNumbers(),
+            codeFolding(),
+            foldGutter({
+                openText: "⯆",
+                closedText: "⯈",
+            }),
+            EditorView.updateListener.of((update) => {
+                if (update.docChanged) {
+                    this.onChange(update.state.doc.toString());
+                }
+            }),
+            // codeFolding(),
+            keymap.of([indentWithTab]),
+        ];
+        if (this.language === "json") {
+            extensions.push(json());
+        }
+        this._editorView = new EditorView({
+            doc: this.value,
+            parent,
+            extensions,
+        });
     }
-  }
 
-  override render() {
-    return html`<div id="editor-container"></div>`;
-  }
+    protected override willUpdate(
+        changedProps: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    ): void {
+        super.willUpdate(changedProps);
+        if (
+            changedProps.has("value") &&
+            this._editorView?.state.doc.toString() !== this.value
+        ) {
+            this._editorView?.dispatch({
+                changes: {
+                    from: 0,
+                    to: this._editorView.state.doc.length,
+                    insert: this.value,
+                },
+            });
+        }
+    }
 
-  onChange(newValue: string) {
-    this.dispatchEvent(
-      new CustomEvent<string>("change", {
-        detail: newValue,
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
+    override render() {
+        return html`<div id="editor-container"></div>`;
+    }
 
-  override disconnectedCallback(): void {
-    this._editorView?.destroy();
-    super.disconnectedCallback();
-  }
+    private onChange(newValue: string) {
+        this.dispatchEvent(
+            new CustomEvent<string>("change", {
+                detail: newValue,
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
+    override disconnectedCallback(): void {
+        this._editorView?.destroy();
+        super.disconnectedCallback();
+    }
 }

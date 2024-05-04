@@ -7,13 +7,15 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("query-params")
 export class QueryParameters extends LitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <properties-panel .properties=${this.state.params}></properties-panel>
-    `;
-  }
+    override render() {
+        return html`
+            <properties-panel
+                .properties=${this.state.params}
+            ></properties-panel>
+        `;
+    }
 }
