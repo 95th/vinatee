@@ -184,30 +184,26 @@ export class PropertyRow extends MobxLitElement {
     }
 }
 
-export class DeletePropertyEvent extends CustomEvent<{ index: number }> {
+class DeletePropertyEvent extends CustomEvent<{ index: number }> {
     constructor(index: number) {
         super("delete", {
             detail: { index },
-            bubbles: true,
-            composed: true,
         });
     }
 }
 
-export class PropertyChangedEvent extends CustomEvent<{
+class PropertyChangedEvent extends CustomEvent<{
     index: number;
     property: Partial<Property>;
 }> {
     constructor(index: number, property: Partial<Property>) {
         super("property-changed", {
             detail: { index, property },
-            bubbles: true,
-            composed: true,
         });
     }
 }
 
-export class TabEvent extends CustomEvent<{ index: number }> {
+class TabEvent extends CustomEvent<{ index: number }> {
     constructor(index: number) {
         super("tab", {
             detail: { index },

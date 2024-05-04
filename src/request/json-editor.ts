@@ -4,6 +4,7 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { EditorTextChangedEvent } from "../components/editor.js";
 import { RequestState, requestContext } from "./state.js";
 
 @customElement("json-editor")
@@ -21,7 +22,7 @@ export class JsonEditor extends MobxLitElement {
         `;
     }
 
-    private onChange(event: CustomEvent<string>) {
+    private onChange(event: EditorTextChangedEvent) {
         this.state.body.setJson(event.detail);
     }
 }

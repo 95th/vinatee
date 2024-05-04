@@ -64,12 +64,6 @@ export class UrlBar extends MobxLitElement {
     }
 
     private onSend() {
-        this.dispatchEvent(new SendEvent());
-    }
-}
-
-export class SendEvent extends CustomEvent<void> {
-    constructor() {
-        super("send", { bubbles: true, composed: true });
+        this.dispatchEvent(new CustomEvent("send"));
     }
 }
