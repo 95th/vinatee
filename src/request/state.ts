@@ -106,11 +106,6 @@ export class RequestBodyState {
     setFile(file: string) {
         this.file = file;
     }
-
-    @action
-    setUrlEncoded(urlEncoded: Properties) {
-        this.urlEncoded = urlEncoded;
-    }
 }
 
 export enum AuthorizationType {
@@ -164,16 +159,9 @@ export class RequestState {
     @observable
     url = "";
 
-    @observable
     headers = new Properties();
-
-    @observable
     params = new Properties();
-
-    @observable
     body = new RequestBodyState();
-
-    @observable
     authorization = new AuthorizationState();
 
     constructor() {
