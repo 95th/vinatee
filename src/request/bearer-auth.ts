@@ -17,6 +17,10 @@ export class BearerAuth extends MobxLitElement {
             <vaadin-text-area
                 style="width:100%"
                 label="Bearer token"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
                 .value=${this.state.authorization.bearerToken}
                 @value-changed=${this.onAuthTypeChange}
             ></vaadin-text-area>

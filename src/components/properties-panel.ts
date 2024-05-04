@@ -118,12 +118,20 @@ export class PropertyRow extends MobxLitElement {
                 <vaadin-text-field
                     style="flex-grow: 1;"
                     placeholder="Name"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
                     .value=${this.property.name}
                     @value-changed=${this.onNameChange}
                 ></vaadin-text-field>
                 <vaadin-text-field
                     style="flex-grow: 1;"
                     placeholder="Value"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
                     .value=${this.property.value}
                     @keydown=${this.onKeydown}
                     @value-changed=${this.onValueChange}

@@ -45,6 +45,9 @@ export class UrlBar extends MobxLitElement {
                     style="flex-grow: 1"
                     placeholder="Enter URL"
                     autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
                     value=${this.state.url}
                     @value-changed=${this.onUrlChange}
                 ></vaadin-text-field>
