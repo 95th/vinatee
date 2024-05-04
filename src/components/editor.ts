@@ -1,6 +1,7 @@
 import { indentWithTab } from "@codemirror/commands";
 import { json } from "@codemirror/lang-json";
 import { codeFolding, foldGutter } from "@codemirror/language";
+import { Text } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
@@ -20,8 +21,8 @@ export class VinEditor extends LitElement {
         }
     `;
 
-    @property()
-    value = "";
+    @property({ attribute: false })
+    value = Text.empty;
 
     @property()
     language = "";
@@ -47,7 +48,7 @@ export class VinEditor extends LitElement {
             }),
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
-                    this.onChange(update.state.doc.toString());
+                    this.onChange(update.state.doc);
                 }
             }),
             // codeFolding(),
@@ -69,7 +70,7 @@ export class VinEditor extends LitElement {
         super.willUpdate(changedProps);
         if (
             changedProps.has("value") &&
-            this._editorView?.state.doc.toString() !== this.value
+            this._editorView?.state.doc !== this.value
         ) {
             this._editorView?.dispatch({
                 changes: {
@@ -85,7 +86,7 @@ export class VinEditor extends LitElement {
         return html`<div id="editor-container"></div>`;
     }
 
-    private onChange(newValue: string) {
+    private onChange(newValue: Text) {
         this.dispatchEvent(new EditorTextChangedEvent(newValue));
     }
 
@@ -95,8 +96,8 @@ export class VinEditor extends LitElement {
     }
 }
 
-export class EditorTextChangedEvent extends CustomEvent<string> {
-    constructor(text: string) {
+export class EditorTextChangedEvent extends CustomEvent<Text> {
+    constructor(text: Text) {
         super("change", { detail: text });
     }
 }

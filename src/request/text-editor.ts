@@ -15,7 +15,7 @@ export class TextEditor extends MobxLitElement {
     override render() {
         return html`
             <vin-editor
-                value=${this.state.body.text}
+                .value=${this.state.body.text}
                 @change=${this.onChange}
             ></vin-editor>
         `;

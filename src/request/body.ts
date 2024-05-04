@@ -10,6 +10,7 @@ import "./text-editor.js";
 import "./url-encoded-form.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { html, nothing } from "lit";
@@ -44,16 +45,33 @@ export class RequestBody extends MobxLitElement {
     private renderControls() {
         switch (this.state.body.type) {
             case RequestBodyType.json:
-                return html`<vaadin-button
-                    theme="tertiary"
-                    @click=${this.onJsonPrettify}
-                >
-                    <vaadin-icon
-                        icon="vaadin:magic"
-                        slot="prefix"
-                    ></vaadin-icon>
-                    Prettify
-                </vaadin-button>`;
+                return html`
+                    <vaadin-horizontal-layout
+                        theme="spacing"
+                        style="justify-content: flex-end"
+                    >
+                        <vaadin-button
+                            theme="tertiary"
+                            @click=${this.onJsonPrettify}
+                        >
+                            <vaadin-icon
+                                icon="vaadin:magic"
+                                slot="prefix"
+                            ></vaadin-icon>
+                            Prettify
+                        </vaadin-button>
+                        <vaadin-button
+                            theme="tertiary"
+                            @click=${this.onJsonMinify}
+                        >
+                            <vaadin-icon
+                                icon="vaadin:compress"
+                                slot="prefix"
+                            ></vaadin-icon>
+                            Minify
+                        </vaadin-button>
+                    </vaadin-horizontal-layout>
+                `;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
                     .properties=${this.state.body.urlEncoded}
@@ -84,12 +102,24 @@ export class RequestBody extends MobxLitElement {
     }
 
     private onJsonPrettify() {
-        const value = this.state.body.json;
+        const value = this.state.body.json.toString();
         try {
             const json = JSON.parse(value);
-            this.state.body.setJson(JSON.stringify(json, null, 2));
+            const pretty = JSON.stringify(json, null, 2);
+            this.state.body.setJson(Text.of(pretty.split("\n")));
         } catch (error) {
             console.error("Failed to prettify JSON", error);
+        }
+    }
+
+    private onJsonMinify() {
+        const value = this.state.body.json.toString();
+        try {
+            const json = JSON.parse(value);
+            const minified = JSON.stringify(json);
+            this.state.body.setJson(Text.of([minified]));
+        } catch (error) {
+            console.error("Failed to minify JSON", error);
         }
     }
 }
