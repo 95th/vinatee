@@ -15,7 +15,7 @@ export class JsonEditor extends MobxLitElement {
     override render() {
         return html`
             <vin-editor
-                value=${this.state.body.json}
+                .value=${this.state.body.json}
                 language="json"
                 @change=${this.onChange}
             ></vin-editor>

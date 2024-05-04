@@ -1,3 +1,4 @@
+import { Text } from "@codemirror/state";
 import { createContext } from "@lit/context";
 import { action, makeObservable, observable } from "mobx";
 
@@ -72,10 +73,10 @@ export class RequestBodyState {
     type = RequestBodyType.none;
 
     @observable
-    json = "";
+    json = Text.empty;
 
     @observable
-    text = "";
+    text = Text.empty;
 
     @observable
     file = "";
@@ -93,12 +94,12 @@ export class RequestBodyState {
     }
 
     @action
-    setJson(json: string) {
+    setJson(json: Text) {
         this.json = json;
     }
 
     @action
-    setText(text: string) {
+    setText(text: Text) {
         this.text = text;
     }
 

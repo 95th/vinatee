@@ -33,8 +33,8 @@ export class VinateeApp extends MobxLitElement {
 
         console.log("Body:");
         console.log("Type=", this.requestState.body.type);
-        console.log("Text=", this.requestState.body.text);
-        console.log("JSON=", this.requestState.body.json);
+        console.log("Text=", this.requestState.body.text.toString());
+        console.log("JSON=", this.requestState.body.json.toString());
         printProperties("URL Encoded form:", this.requestState.body.urlEncoded);
         console.log("File=", this.requestState.body.file);
 
