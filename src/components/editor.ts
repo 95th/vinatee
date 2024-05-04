@@ -1,7 +1,7 @@
 import { indentWithTab } from "@codemirror/commands";
 import { json } from "@codemirror/lang-json";
 import { codeFolding, foldGutter } from "@codemirror/language";
-import { Text } from "@codemirror/state";
+import { Compartment, Text } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
@@ -27,10 +27,14 @@ export class VinEditor extends LitElement {
     @property()
     language = "";
 
+    @property({ type: Boolean, attribute: false })
+    wrapLines = false;
+
     @queryAsync("#editor-container")
     editorContainer!: Promise<HTMLElement>;
 
-    private _editorView?: EditorView;
+    private editorView?: EditorView;
+    private lineWrapping = new Compartment();
 
     override connectedCallback(): void {
         super.connectedCallback();
@@ -46,18 +50,20 @@ export class VinEditor extends LitElement {
                 openText: "⯆",
                 closedText: "⯈",
             }),
+            this.lineWrapping.of(
+                this.wrapLines ? [EditorView.lineWrapping] : []
+            ),
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
                     this.onChange(update.state.doc);
                 }
             }),
-            // codeFolding(),
             keymap.of([indentWithTab]),
         ];
         if (this.language === "json") {
             extensions.push(json());
         }
-        this._editorView = new EditorView({
+        this.editorView = new EditorView({
             doc: this.value,
             parent,
             extensions,
@@ -68,16 +74,25 @@ export class VinEditor extends LitElement {
         changedProps: PropertyValueMap<any> | Map<PropertyKey, unknown>
     ): void {
         super.willUpdate(changedProps);
+
         if (
             changedProps.has("value") &&
-            this._editorView?.state.doc !== this.value
+            this.editorView?.state.doc !== this.value
         ) {
-            this._editorView?.dispatch({
+            this.editorView?.dispatch({
                 changes: {
                     from: 0,
-                    to: this._editorView.state.doc.length,
+                    to: this.editorView.state.doc.length,
                     insert: this.value,
                 },
+            });
+        }
+
+        if (changedProps.has("wrapLines")) {
+            this.editorView?.dispatch({
+                effects: this.lineWrapping.reconfigure(
+                    this.wrapLines ? [EditorView.lineWrapping] : []
+                ),
             });
         }
     }
@@ -91,7 +106,7 @@ export class VinEditor extends LitElement {
     }
 
     override disconnectedCallback(): void {
-        this._editorView?.destroy();
+        this.editorView?.destroy();
         super.disconnectedCallback();
     }
 }

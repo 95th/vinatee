@@ -13,8 +13,8 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
-import { html, nothing } from "lit";
-import { customElement } from "lit/decorators.js";
+import { LitElement, html, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
@@ -26,6 +26,9 @@ const bodyTypes = Object.values(RequestBodyType).map((type) => ({
 export class RequestBody extends MobxLitElement {
     @consume({ context: requestContext })
     private state!: RequestState;
+
+    @state()
+    wrapLines = false;
 
     override render() {
         return html`<vaadin-vertical-layout style="align-items: stretch">
@@ -45,33 +48,37 @@ export class RequestBody extends MobxLitElement {
     private renderControls() {
         switch (this.state.body.type) {
             case RequestBodyType.json:
-                return html`
-                    <vaadin-horizontal-layout
-                        theme="spacing"
-                        style="justify-content: flex-end"
+                return html`<vaadin-horizontal-layout
+                    theme="spacing"
+                    style="justify-content: flex-end"
+                >
+                    <vaadin-button
+                        theme="tertiary"
+                        @click=${this.onJsonPrettify}
                     >
-                        <vaadin-button
-                            theme="tertiary"
-                            @click=${this.onJsonPrettify}
-                        >
-                            <vaadin-icon
-                                icon="vaadin:magic"
-                                slot="prefix"
-                            ></vaadin-icon>
-                            Prettify
-                        </vaadin-button>
-                        <vaadin-button
-                            theme="tertiary"
-                            @click=${this.onJsonMinify}
-                        >
-                            <vaadin-icon
-                                icon="vaadin:compress-square"
-                                slot="prefix"
-                            ></vaadin-icon>
-                            Minify
-                        </vaadin-button>
-                    </vaadin-horizontal-layout>
-                `;
+                        <vaadin-icon
+                            icon="vaadin:magic"
+                            slot="prefix"
+                        ></vaadin-icon>
+                        Prettify
+                    </vaadin-button>
+                    <vaadin-button theme="tertiary" @click=${this.onJsonMinify}>
+                        <vaadin-icon
+                            icon="vaadin:compress-square"
+                            slot="prefix"
+                        ></vaadin-icon>
+                        Minify
+                    </vaadin-button>
+                    <line-wrap-button
+                        .value=${this.wrapLines}
+                        @toggle=${this.onWrapLinesToggle}
+                    ></line-wrap-button>
+                </vaadin-horizontal-layout>`;
+            case RequestBodyType.text:
+                return html`<line-wrap-button
+                    .value=${this.wrapLines}
+                    @toggle=${this.onWrapLinesToggle}
+                ></line-wrap-button>`;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
                     .properties=${this.state.body.urlEncoded}
@@ -86,9 +93,13 @@ export class RequestBody extends MobxLitElement {
             case RequestBodyType.urlEncoded:
                 return html`<url-encoded-form></url-encoded-form>`;
             case RequestBodyType.json:
-                return html`<json-editor></json-editor>`;
+                return html`<json-editor
+                    .wrapLines=${this.wrapLines}
+                ></json-editor>`;
             case RequestBodyType.text:
-                return html`<text-editor></text-editor>`;
+                return html`<text-editor
+                    .wrapLines=${this.wrapLines}
+                ></text-editor>`;
             case RequestBodyType.file:
                 return html`<file-body></file-body>`;
             default:
@@ -121,5 +132,31 @@ export class RequestBody extends MobxLitElement {
         } catch (error) {
             console.error("Failed to minify JSON", error);
         }
+    }
+
+    private onWrapLinesToggle() {
+        this.wrapLines = !this.wrapLines;
+    }
+}
+
+@customElement("line-wrap-button")
+export class LineWrapButton extends LitElement {
+    @property()
+    value = false;
+
+    override render() {
+        return html`<vaadin-button theme="tertiary" @click=${this.onWrapToggle}>
+            <vaadin-icon
+                icon=${this.value
+                    ? "vaadin:check-square-o"
+                    : "vaadin:thin-square"}
+                slot="prefix"
+            ></vaadin-icon>
+            Wrap Lines
+        </vaadin-button>`;
+    }
+
+    private onWrapToggle() {
+        this.dispatchEvent(new CustomEvent("toggle"));
     }
 }
