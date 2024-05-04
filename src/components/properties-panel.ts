@@ -47,6 +47,7 @@ export class PropertiesPanel extends MobxLitElement {
                     style="justify-content: end"
                     @delete=${this.onDelete}
                     @property-changed=${this.onChange}
+                    @tab=${this.onTab}
                 ></property-row>
             `
         );
@@ -59,6 +60,12 @@ export class PropertiesPanel extends MobxLitElement {
 
     private onDelete(event: DeletePropertyEvent) {
         this.properties.delete(event.detail.index);
+    }
+
+    private onTab(event: TabEvent) {
+        if (this.properties.entries.length === event.detail.index + 1) {
+            this.properties.add();
+        }
     }
 }
 
@@ -110,6 +117,7 @@ export class PropertyRow extends MobxLitElement {
             <vaadin-horizontal-layout theme="spacing-s">
                 <vaadin-checkbox
                     style="align-self: center;"
+                    tabindex="-1"
                     .checked=${this.property.enabled}
                     @checked-changed=${this.onEnabledChange}
                 ></vaadin-checkbox>
@@ -123,9 +131,14 @@ export class PropertyRow extends MobxLitElement {
                     style="flex-grow: 1;"
                     placeholder="Value"
                     .value=${this.property.value}
+                    @keydown=${this.onKeydown}
                     @value-changed=${this.onValueChange}
                 ></vaadin-text-field>
-                <vaadin-button theme="tertiary icon" @click=${this.onDelete}>
+                <vaadin-button
+                    tabindex="-1"
+                    theme="tertiary icon"
+                    @click=${this.onDelete}
+                >
                     <vaadin-tooltip
                         slot="tooltip"
                         text="Delete"
@@ -157,6 +170,18 @@ export class PropertyRow extends MobxLitElement {
             new PropertyChangedEvent(this.index, { value: e.detail.value })
         );
     }
+
+    private onKeydown(e: KeyboardEvent) {
+        if (
+            e.key === "Tab" &&
+            !e.shiftKey &&
+            !e.ctrlKey &&
+            !e.altKey &&
+            !e.metaKey
+        ) {
+            this.dispatchEvent(new TabEvent(this.index));
+        }
+    }
 }
 
 export class DeletePropertyEvent extends CustomEvent<{ index: number }> {
@@ -178,6 +203,14 @@ export class PropertyChangedEvent extends CustomEvent<{
             detail: { index, property },
             bubbles: true,
             composed: true,
+        });
+    }
+}
+
+export class TabEvent extends CustomEvent<{ index: number }> {
+    constructor(index: number) {
+        super("tab", {
+            detail: { index },
         });
     }
 }
