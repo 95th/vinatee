@@ -17,12 +17,20 @@ export class BasicAuth extends MobxLitElement {
         return html`<vaadin-vertical-layout style="align-items: stretch">
             <vaadin-text-field
                 label="Username"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
                 .value=${this.state.authorization.basicUsername}
                 @value-changed=${this.onUsernameChange}
             >
             </vaadin-text-field>
             <vaadin-text-field
                 label="Password"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
                 .value=${this.state.authorization.basicPassword}
                 @value-changed=${this.onPasswordChange}
             >
