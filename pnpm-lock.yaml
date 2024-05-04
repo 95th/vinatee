@@ -82,6 +82,9 @@ devDependencies:
   '@tauri-apps/cli':
     specifier: ^1
     version: 1.5.12
+  prettier:
+    specifier: 3.2.5
+    version: 3.2.5
   typescript:
     specifier: ^5.0.2
     version: 5.4.5
@@ -1076,6 +1079,12 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.2.0
+    dev: true
+
+  /prettier@3.2.5:
+    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /rollup@4.17.2:

@@ -8,15 +8,15 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("url-encoded-form")
 export class UrlEncodedForm extends MobxLitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <properties-panel
-        .properties=${this.state.body.urlEncoded}
-      ></properties-panel>
-    `;
-  }
+    render() {
+        return html`
+            <properties-panel
+                .properties=${this.state.body.urlEncoded}
+            ></properties-panel>
+        `;
+    }
 }

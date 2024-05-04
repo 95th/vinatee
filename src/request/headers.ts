@@ -7,13 +7,15 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("request-headers")
 export class RequestHeaders extends LitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <properties-panel .properties=${this.state.headers}></properties-panel>
-    `;
-  }
+    render() {
+        return html`
+            <properties-panel
+                .properties=${this.state.headers}
+            ></properties-panel>
+        `;
+    }
 }

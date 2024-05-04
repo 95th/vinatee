@@ -16,156 +16,168 @@ import { Properties, Property } from "../request/state.js";
 
 @customElement("properties-panel")
 export class PropertiesPanel extends MobxLitElement {
-  @property({ attribute: false })
-  properties!: Properties;
+    @property({ attribute: false })
+    properties!: Properties;
 
-  protected willUpdate(
-    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
-    if (this.properties.entries.length === 0) {
-      this.properties.add();
+    protected willUpdate(
+        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    ): void {
+        if (this.properties.entries.length === 0) {
+            this.properties.add();
+        }
     }
-  }
 
-  render() {
-    return html`
-      <vaadin-vertical-layout theme="spacing-xs" style="align-items: stretch">
-        ${this.renderPropertyRows()}
-      </vaadin-vertical-layout>
-    `;
-  }
+    render() {
+        return html`
+            <vaadin-vertical-layout
+                theme="spacing-xs"
+                style="align-items: stretch"
+            >
+                ${this.renderPropertyRows()}
+            </vaadin-vertical-layout>
+        `;
+    }
 
-  private renderPropertyRows() {
-    return this.properties.entries.map(
-      (property, index) => html`
-        <property-row
-          .property=${property}
-          .index=${index}
-          style="justify-content: end"
-          @delete=${this.onDelete}
-          @property-changed=${this.onChange}
-        ></property-row>
-      `
-    );
-  }
+    private renderPropertyRows() {
+        return this.properties.entries.map(
+            (property, index) => html`
+                <property-row
+                    .property=${property}
+                    .index=${index}
+                    style="justify-content: end"
+                    @delete=${this.onDelete}
+                    @property-changed=${this.onChange}
+                ></property-row>
+            `
+        );
+    }
 
-  private onChange(event: PropertyChangedEvent) {
-    const { index, property } = event.detail;
-    this.properties.update(index, property);
-  }
+    private onChange(event: PropertyChangedEvent) {
+        const { index, property } = event.detail;
+        this.properties.update(index, property);
+    }
 
-  private onDelete(event: DeletePropertyEvent) {
-    this.properties.delete(event.detail.index);
-  }
+    private onDelete(event: DeletePropertyEvent) {
+        this.properties.delete(event.detail.index);
+    }
 }
 
 @customElement("properties-controls")
 export class PropertiesControls extends MobxLitElement {
-  @property({ attribute: false })
-  properties!: Properties;
+    @property({ attribute: false })
+    properties!: Properties;
 
-  render() {
-    return html`
-      <vaadin-horizontal-layout theme="spacing-s" style="justify-content: end">
-        <vaadin-button theme="tertiary" @click=${this.onDeleteAll}>
-          <vaadin-icon icon="vaadin:trash" slot="prefix"></vaadin-icon>
-          Delete all
-        </vaadin-button>
-        <vaadin-button theme="tertiary" @click=${this.onAdd}>
-          <vaadin-icon icon="vaadin:plus" slot="prefix"></vaadin-icon>
-          Add
-        </vaadin-button>
-      </vaadin-horizontal-layout>
-    `;
-  }
+    render() {
+        return html`
+            <vaadin-horizontal-layout
+                theme="spacing-s"
+                style="justify-content: end"
+            >
+                <vaadin-button theme="tertiary" @click=${this.onDeleteAll}>
+                    <vaadin-icon
+                        icon="vaadin:trash"
+                        slot="prefix"
+                    ></vaadin-icon>
+                    Delete all
+                </vaadin-button>
+                <vaadin-button theme="tertiary" @click=${this.onAdd}>
+                    <vaadin-icon icon="vaadin:plus" slot="prefix"></vaadin-icon>
+                    Add
+                </vaadin-button>
+            </vaadin-horizontal-layout>
+        `;
+    }
 
-  private onAdd() {
-    this.properties.add();
-  }
+    private onAdd() {
+        this.properties.add();
+    }
 
-  private onDeleteAll() {
-    this.properties.deleteAll();
-  }
+    private onDeleteAll() {
+        this.properties.deleteAll();
+    }
 }
 
 @customElement("property-row")
 export class PropertyRow extends MobxLitElement {
-  @property({ attribute: false })
-  property!: Property;
+    @property({ attribute: false })
+    property!: Property;
 
-  @property({ type: Number })
-  index!: number;
+    @property({ type: Number })
+    index!: number;
 
-  render() {
-    return html`
-      <vaadin-horizontal-layout theme="spacing-s">
-        <vaadin-checkbox
-          style="align-self: center;"
-          .checked=${this.property.enabled}
-          @checked-changed=${this.onEnabledChange}
-        ></vaadin-checkbox>
-        <vaadin-text-field
-          style="flex-grow: 1;"
-          placeholder="Name"
-          .value=${this.property.name}
-          @value-changed=${this.onNameChange}
-        ></vaadin-text-field>
-        <vaadin-text-field
-          style="flex-grow: 1;"
-          placeholder="Value"
-          .value=${this.property.value}
-          @value-changed=${this.onValueChange}
-        ></vaadin-text-field>
-        <vaadin-button theme="tertiary icon" @click=${this.onDelete}>
-          <vaadin-tooltip slot="tooltip" text="Delete"></vaadin-tooltip>
-          <vaadin-icon icon="vaadin:minus"></vaadin-icon>
-        </vaadin-button>
-      </vaadin-horizontal-layout>
-    `;
-  }
+    render() {
+        return html`
+            <vaadin-horizontal-layout theme="spacing-s">
+                <vaadin-checkbox
+                    style="align-self: center;"
+                    .checked=${this.property.enabled}
+                    @checked-changed=${this.onEnabledChange}
+                ></vaadin-checkbox>
+                <vaadin-text-field
+                    style="flex-grow: 1;"
+                    placeholder="Name"
+                    .value=${this.property.name}
+                    @value-changed=${this.onNameChange}
+                ></vaadin-text-field>
+                <vaadin-text-field
+                    style="flex-grow: 1;"
+                    placeholder="Value"
+                    .value=${this.property.value}
+                    @value-changed=${this.onValueChange}
+                ></vaadin-text-field>
+                <vaadin-button theme="tertiary icon" @click=${this.onDelete}>
+                    <vaadin-tooltip
+                        slot="tooltip"
+                        text="Delete"
+                    ></vaadin-tooltip>
+                    <vaadin-icon icon="vaadin:minus"></vaadin-icon>
+                </vaadin-button>
+            </vaadin-horizontal-layout>
+        `;
+    }
 
-  private onDelete() {
-    this.dispatchEvent(new DeletePropertyEvent(this.index));
-  }
+    private onDelete() {
+        this.dispatchEvent(new DeletePropertyEvent(this.index));
+    }
 
-  private onEnabledChange(e: CheckboxCheckedChangedEvent) {
-    this.dispatchEvent(
-      new PropertyChangedEvent(this.index, { enabled: e.detail.value })
-    );
-  }
+    private onEnabledChange(e: CheckboxCheckedChangedEvent) {
+        this.dispatchEvent(
+            new PropertyChangedEvent(this.index, { enabled: e.detail.value })
+        );
+    }
 
-  private onNameChange(e: TextFieldValueChangedEvent) {
-    this.dispatchEvent(
-      new PropertyChangedEvent(this.index, { name: e.detail.value })
-    );
-  }
+    private onNameChange(e: TextFieldValueChangedEvent) {
+        this.dispatchEvent(
+            new PropertyChangedEvent(this.index, { name: e.detail.value })
+        );
+    }
 
-  private onValueChange(e: TextFieldValueChangedEvent) {
-    this.dispatchEvent(
-      new PropertyChangedEvent(this.index, { value: e.detail.value })
-    );
-  }
+    private onValueChange(e: TextFieldValueChangedEvent) {
+        this.dispatchEvent(
+            new PropertyChangedEvent(this.index, { value: e.detail.value })
+        );
+    }
 }
 
 export class DeletePropertyEvent extends CustomEvent<{ index: number }> {
-  constructor(index: number) {
-    super("delete", {
-      detail: { index },
-      bubbles: true,
-      composed: true,
-    });
-  }
+    constructor(index: number) {
+        super("delete", {
+            detail: { index },
+            bubbles: true,
+            composed: true,
+        });
+    }
 }
 
 export class PropertyChangedEvent extends CustomEvent<{
-  index: number;
-  property: Partial<Property>;
+    index: number;
+    property: Partial<Property>;
 }> {
-  constructor(index: number, property: Partial<Property>) {
-    super("property-changed", {
-      detail: { index, property },
-      bubbles: true,
-      composed: true,
-    });
-  }
+    constructor(index: number, property: Partial<Property>) {
+        super("property-changed", {
+            detail: { index, property },
+            bubbles: true,
+            composed: true,
+        });
+    }
 }

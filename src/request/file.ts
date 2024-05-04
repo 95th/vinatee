@@ -13,47 +13,53 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("file-body")
 export class FileBody extends MobxLitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <vaadin-horizontal-layout theme="spacing-s">
-        <vaadin-button theme="secondary" @click=${this.selectFile}>
-          <vaadin-icon icon="vaadin:cloud-upload" slot="prefix"></vaadin-icon>
-          Select file
-        </vaadin-button>
-        ${this.renderFile()}
-      </vaadin-horizontal-layout>
-    `;
-  }
-
-  private renderFile() {
-    if (!this.state.body.file) {
-      return nothing;
+    render() {
+        return html`
+            <vaadin-horizontal-layout theme="spacing-s">
+                <vaadin-button theme="secondary" @click=${this.selectFile}>
+                    <vaadin-icon
+                        icon="vaadin:cloud-upload"
+                        slot="prefix"
+                    ></vaadin-icon>
+                    Select file
+                </vaadin-button>
+                ${this.renderFile()}
+            </vaadin-horizontal-layout>
+        `;
     }
 
-    const filename = this.state.body.file.split("/").pop();
+    private renderFile() {
+        if (!this.state.body.file) {
+            return nothing;
+        }
 
-    return html`
-      <vaadin-horizontal-layout theme="spacing-s">
-        <vaadin-custom-field>${filename}</vaadin-custom-field>
-        <vaadin-button theme="tertiary-inline" @click=${this.clearFile}>
-          <vaadin-icon icon="vaadin:close-small" slot="prefix"></vaadin-icon>
-        </vaadin-button>
-      </vaadin-horizontal-layout>
-    `;
-  }
+        const filename = this.state.body.file.split("/").pop();
 
-  private async selectFile() {
-    const selected = await open({ multiple: false });
-    if (selected) {
-      this.state.body.setFile(selected as string);
+        return html`
+            <vaadin-horizontal-layout theme="spacing-s">
+                <vaadin-custom-field>${filename}</vaadin-custom-field>
+                <vaadin-button theme="tertiary-inline" @click=${this.clearFile}>
+                    <vaadin-icon
+                        icon="vaadin:close-small"
+                        slot="prefix"
+                    ></vaadin-icon>
+                </vaadin-button>
+            </vaadin-horizontal-layout>
+        `;
     }
-  }
 
-  private clearFile() {
-    this.state.body.setFile("");
-  }
+    private async selectFile() {
+        const selected = await open({ multiple: false });
+        if (selected) {
+            this.state.body.setFile(selected as string);
+        }
+    }
+
+    private clearFile() {
+        this.state.body.setFile("");
+    }
 }

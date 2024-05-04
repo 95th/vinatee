@@ -9,22 +9,22 @@ import { RequestState, requestContext } from "./state.js";
 
 @customElement("bearer-auth")
 export class BearerAuth extends MobxLitElement {
-  @consume({ context: requestContext })
-  @state()
-  private state!: RequestState;
+    @consume({ context: requestContext })
+    @state()
+    private state!: RequestState;
 
-  render() {
-    return html`
-      <vaadin-text-area
-        style="width:100%"
-        label="Bearer token"
-        .value=${this.state.authorization.bearerToken}
-        @value-changed=${this.onAuthTypeChange}
-      ></vaadin-text-area>
-    `;
-  }
+    render() {
+        return html`
+            <vaadin-text-area
+                style="width:100%"
+                label="Bearer token"
+                .value=${this.state.authorization.bearerToken}
+                @value-changed=${this.onAuthTypeChange}
+            ></vaadin-text-area>
+        `;
+    }
 
-  private onAuthTypeChange(event: TextAreaValueChangedEvent) {
-    this.state.authorization.setBearerToken(event.detail.value);
-  }
+    private onAuthTypeChange(event: TextAreaValueChangedEvent) {
+        this.state.authorization.setBearerToken(event.detail.value);
+    }
 }
