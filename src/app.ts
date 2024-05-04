@@ -1,6 +1,6 @@
 import "@vaadin/vertical-layout";
 import "./request/panel.js";
-import "./request/url_bar.js";
+import "./request/url-bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";

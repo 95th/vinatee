@@ -5,10 +5,34 @@ export const requestContext = createContext<RequestState>(
     Symbol("request-context")
 );
 
-export interface Property {
-    name: string;
-    value: string;
-    enabled: boolean;
+export class Property {
+    @observable
+    name = "";
+
+    @observable
+    value = "";
+
+    @observable
+    enabled = true;
+
+    constructor() {
+        makeObservable(this);
+    }
+
+    @action
+    setEnabled(enabled: boolean) {
+        this.enabled = enabled;
+    }
+
+    @action
+    setName(name: string) {
+        this.name = name;
+    }
+
+    @action
+    setValue(value: string) {
+        this.value = value;
+    }
 }
 
 export class Properties {
@@ -21,7 +45,7 @@ export class Properties {
 
     @action
     add() {
-        this.entries.push({ name: "", value: "", enabled: true });
+        this.entries.push(new Property());
     }
 
     @action
@@ -32,12 +56,6 @@ export class Properties {
     @action
     deleteAll() {
         this.entries = [];
-    }
-
-    @action
-    update(index: number, property: Partial<Property>) {
-        const old = this.entries[index];
-        this.entries[index] = { ...old, ...property };
     }
 }
 

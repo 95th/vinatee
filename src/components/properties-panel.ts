@@ -46,16 +46,10 @@ export class PropertiesPanel extends MobxLitElement {
                     .index=${index}
                     style="justify-content: end"
                     @delete=${this.onDelete}
-                    @property-changed=${this.onChange}
                     @tab=${this.onTab}
                 ></property-row>
             `
         );
-    }
-
-    private onChange(event: PropertyChangedEvent) {
-        const { index, property } = event.detail;
-        this.properties.update(index, property);
     }
 
     private onDelete(event: DeletePropertyEvent) {
@@ -154,21 +148,15 @@ export class PropertyRow extends MobxLitElement {
     }
 
     private onEnabledChange(e: CheckboxCheckedChangedEvent) {
-        this.dispatchEvent(
-            new PropertyChangedEvent(this.index, { enabled: e.detail.value })
-        );
+        this.property.setEnabled(e.detail.value);
     }
 
     private onNameChange(e: TextFieldValueChangedEvent) {
-        this.dispatchEvent(
-            new PropertyChangedEvent(this.index, { name: e.detail.value })
-        );
+        this.property.setName(e.detail.value);
     }
 
     private onValueChange(e: TextFieldValueChangedEvent) {
-        this.dispatchEvent(
-            new PropertyChangedEvent(this.index, { value: e.detail.value })
-        );
+        this.property.setValue(e.detail.value);
     }
 
     private onKeydown(e: KeyboardEvent) {
@@ -188,17 +176,6 @@ class DeletePropertyEvent extends CustomEvent<{ index: number }> {
     constructor(index: number) {
         super("delete", {
             detail: { index },
-        });
-    }
-}
-
-class PropertyChangedEvent extends CustomEvent<{
-    index: number;
-    property: Partial<Property>;
-}> {
-    constructor(index: number, property: Partial<Property>) {
-        super("property-changed", {
-            detail: { index, property },
         });
     }
 }
