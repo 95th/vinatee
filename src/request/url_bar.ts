@@ -8,7 +8,7 @@ import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
 const methods = [
@@ -29,7 +29,6 @@ const methods = [
 @customElement("url-bar")
 export class UrlBar extends MobxLitElement {
     @consume({ context: requestContext })
-    @state()
     private state!: RequestState;
 
     override render() {
