@@ -1,3 +1,5 @@
+import "@vaadin/grid";
+
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
@@ -7,11 +9,20 @@ export class ResponseHeadersPanel extends LitElement {
     public headers = new Headers();
 
     override render() {
+        const headers = Array.from(this.headers.entries()).map(
+            ([name, value]) => ({ name, value })
+        );
         return html`
-            ${Array.from(this.headers.entries()).map(
-                ([name, value]) =>
-                    html`<div><strong>${name}:</strong> ${value}</div> `
-            )}
+            <vaadin-grid .items="${headers}">
+                <vaadin-grid-column
+                    header="Name"
+                    path="name"
+                ></vaadin-grid-column>
+                <vaadin-grid-column
+                    header="Value"
+                    path="value"
+                ></vaadin-grid-column>
+            </vaadin-grid>
         `;
     }
 }

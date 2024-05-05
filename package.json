@@ -24,6 +24,7 @@
         "@vaadin/button": "^24.3.11",
         "@vaadin/checkbox": "^24.3.11",
         "@vaadin/custom-field": "^24.3.11",
+        "@vaadin/grid": "^24.3.11",
         "@vaadin/horizontal-layout": "^24.3.11",
         "@vaadin/icon": "^24.3.11",
         "@vaadin/icons": "^24.3.11",
