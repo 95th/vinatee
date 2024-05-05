@@ -9,7 +9,7 @@ import "./response-headers.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
-import { LitElement, css, html, nothing } from "lit";
+import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { ResponseState, responseContext } from "../request/state.js";
@@ -23,25 +23,38 @@ export class ResponsePanel extends MobxLitElement {
     @state()
     private selectedTabIndex = 0;
 
+    @state()
+    private tabs: string[] = [];
+
+    private contentType() {
+        return this.state.headers.get("Content-Type")?.split(";")[0];
+    }
+
+    protected override willUpdate(
+        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    ): void {
+        super.willUpdate(_changedProperties);
+        if (this.state.status) {
+            const tabs = [];
+            const contentType = this.contentType();
+            if (
+                contentType?.includes("application/json") ||
+                contentType?.endsWith("+json")
+            ) {
+                tabs.push("JSON");
+            } else {
+                tabs.push("Text");
+            }
+
+            tabs.push("Headers");
+            this.tabs = tabs;
+        }
+    }
+
     override render() {
         if (!this.state.status) {
             return nothing;
         }
-
-        const tabs = [];
-        const contentType = this.state.headers
-            .get("Content-Type")
-            ?.split(";")[0];
-        if (
-            contentType?.includes("application/json") ||
-            contentType?.endsWith("+json")
-        ) {
-            tabs.push("JSON");
-        } else {
-            tabs.push("Text");
-        }
-
-        tabs.push("Headers");
 
         return html`
             <vaadin-vertical-layout
@@ -52,7 +65,7 @@ export class ResponsePanel extends MobxLitElement {
                     .status=${this.state.status}
                     .statusText=${this.state.statusText}
                     .contentLength=${this.state.body.byteLength}
-                    .contentType=${contentType}
+                    .contentType=${this.contentType()}
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
@@ -61,23 +74,22 @@ export class ResponsePanel extends MobxLitElement {
                         slot="tabs"
                         @selected-changed=${this.onTabChange}
                     >
-                        ${this.renderTabs(tabs)}
+                        ${this.renderTabs()}
                     </vaadin-tabs>
-
-                    ${this.renderTabContents(tabs)}
+                    ${this.renderTabContents()}
                 </vaadin-tabsheet>
             </vaadin-vertical-layout>
         `;
     }
 
-    private renderTabs(tabs: string[]) {
-        return repeat(tabs, (tab) => {
+    private renderTabs() {
+        return repeat(this.tabs, (tab) => {
             return html`<vaadin-tab id=${tab}>${tab}</vaadin-tab>`;
         });
     }
 
-    private renderTabContents(tabs: string[]) {
-        return repeat(tabs, (tab) => {
+    private renderTabContents() {
+        return repeat(this.tabs, (tab) => {
             if (tab === "JSON") {
                 return html`<json-response
                     tab=${tab}
