@@ -4,8 +4,7 @@ import "./request/url-bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
-import { readFile } from "@tauri-apps/plugin-fs";
-import { fetch } from "@tauri-apps/plugin-http";
+import { invoke } from "@tauri-apps/api/core";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import {
@@ -32,108 +31,58 @@ export class VinateeApp extends MobxLitElement {
     }
 
     private async onSend() {
-        const url = new URL(this.requestState.url);
-
-        for (const p of this.requestState.params.entries) {
-            if (p.enabled && p.name !== "") {
-                url.searchParams.append(p.name, p.value);
-            }
+        const authState = this.requestState.authorization;
+        let auth: unknown;
+        switch (authState.type) {
+            case AuthorizationType.basic:
+                auth = {
+                    type: "basic",
+                    username: authState.basicUsername,
+                    password: authState.basicUsername,
+                };
+                break;
+            case AuthorizationType.bearer:
+                auth = { type: "bearer", token: authState.bearerToken };
+                break;
+            case AuthorizationType.none:
+                auth = { type: "none" };
+                break;
         }
 
-        let hasContentTypeHeader = false;
-        let hasAuthHeader = false;
-
-        const headers: [string, string][] = [["User-Agent", "Vinatee/0.1"]];
-        for (const p of this.requestState.headers.entries) {
-            if (
-                p.enabled &&
-                p.name !== "" &&
-                p.name.toLowerCase() !== "user-agent"
-            ) {
-                headers.push([p.name, p.value]);
-                if (p.name.toLowerCase() === "content-type") {
-                    hasContentTypeHeader = true;
-                }
-                if (p.name.toLowerCase() === "authorization") {
-                    hasAuthHeader = true;
-                }
-            }
-        }
-
-        let body: BodyInit | undefined;
-
-        switch (this.requestState.body.type) {
+        let bodyState = this.requestState.body;
+        let body: unknown;
+        switch (bodyState.type) {
             case RequestBodyType.none:
+                body = { type: "none" };
                 break;
             case RequestBodyType.text:
-                if (!hasContentTypeHeader) {
-                    headers.push(["Content-Type", "text/plain"]);
-                }
-                body = this.requestState.body.text.toString();
+                body = { type: "text", text: bodyState.text };
                 break;
             case RequestBodyType.json:
-                if (!hasContentTypeHeader) {
-                    headers.push(["Content-Type", "application/json"]);
-                }
-                body = this.requestState.body.json.toString();
+                body = { type: "json", json: bodyState.json };
                 break;
             case RequestBodyType.urlEncoded:
-                if (!hasContentTypeHeader) {
-                    headers.push([
-                        "Content-Type",
-                        "application/x-www-form-urlencoded",
-                    ]);
-                }
-                body = new URLSearchParams();
-                for (const p of this.requestState.body.urlEncoded.entries) {
-                    if (p.enabled && p.name !== "") {
-                        body.append(p.name, p.value);
-                    }
-                }
+                body = { type: "form", form: bodyState.urlEncoded.entries };
                 break;
             case RequestBodyType.file:
-                if (this.requestState.body.file !== "") {
-                    if (!hasContentTypeHeader) {
-                        // TODO: Guess mimetype from file extension or magic number
-                        headers.push([
-                            "Content-Type",
-                            "application/octet-stream",
-                        ]);
-                    }
-                    body = await readFile(this.requestState.body.file);
-                }
-                break;
+                body = { type: "file", path: bodyState.file };
         }
 
-        if (!hasAuthHeader) {
-            switch (this.requestState.authorization.type) {
-                case AuthorizationType.none:
-                    break;
-                case AuthorizationType.basic:
-                    const concatenated = `${this.requestState.authorization.basicUsername}:${this.requestState.authorization.basicPassword}`;
-                    headers.push([
-                        "Authorization",
-                        `Basic ${btoa(concatenated)}`,
-                    ]);
-                    break;
-                case AuthorizationType.bearer:
-                    headers.push([
-                        "Authorization",
-                        `Bearer ${this.requestState.authorization.bearerToken}`,
-                    ]);
-                    break;
-            }
-        }
-
-        const response = await fetch(url, {
+        const request = {
+            url: this.requestState.url,
             method: this.requestState.method,
-            headers,
+            params: this.requestState.params.entries,
+            headers: this.requestState.headers.entries,
+            auth,
             body,
-        });
+            disable_ssl_verify: false,
+        };
 
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.headers);
-        console.log(await response.text());
+        try {
+            const code = await invoke("fetch", { request });
+            console.log(code);
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

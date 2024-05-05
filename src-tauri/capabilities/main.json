@@ -11,18 +11,12 @@
     "dialog:allow-save",
     "dialog:default",
     "event:default",
-    {
-      "identifier": "http:default",
-      "allow": [{ "url": "https://*" }, { "url" :"http://*"} ]
-    },
     "menu:default",
     "path:default",
     "resources:default",
     "shell:allow-open",
     "shell:default",
     "tray:default",
-    "window:default",
-    "fs:default",
-    "fs:allow-read"
+    "window:default"
   ]
 }
