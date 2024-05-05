@@ -1,7 +1,7 @@
 import { indentWithTab } from "@codemirror/commands";
 import { json } from "@codemirror/lang-json";
 import { codeFolding, foldGutter } from "@codemirror/language";
-import { Compartment, Text } from "@codemirror/state";
+import { Compartment, EditorState, Text } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
@@ -33,6 +33,9 @@ export class VinEditor extends LitElement {
 
     @property({ type: Boolean, attribute: false })
     wrapLines = false;
+
+    @property({ type: Boolean })
+    readonly = false;
 
     @queryAsync("#editor-container")
     editorContainer!: Promise<HTMLElement>;
@@ -67,6 +70,7 @@ export class VinEditor extends LitElement {
         if (this.language === "json") {
             extensions.push(json());
         }
+        extensions.push(EditorState.readOnly.of(this.readonly));
         this.editorView = new EditorView({
             doc: this.value,
             parent,

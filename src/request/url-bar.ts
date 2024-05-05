@@ -67,6 +67,8 @@ export class UrlBar extends MobxLitElement {
     }
 
     private onSend() {
-        this.dispatchEvent(new CustomEvent("send"));
+        this.dispatchEvent(
+            new CustomEvent("send", { bubbles: true, composed: true })
+        );
     }
 }

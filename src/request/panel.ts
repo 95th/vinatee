@@ -1,9 +1,11 @@
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
+import "@vaadin/vertical-layout";
 import "./authorization.js";
 import "./body.js";
 import "./headers.js";
 import "./query-params.js";
+import "./url-bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
@@ -12,8 +14,8 @@ import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
-@customElement("request-properties")
-export class RequestProperties extends MobxLitElement {
+@customElement("request-panel")
+export class RequestPanel extends MobxLitElement {
     @consume({ context: requestContext })
     private state!: RequestState;
 
@@ -21,21 +23,34 @@ export class RequestProperties extends MobxLitElement {
     private selectedTabIndex = 0;
 
     override render() {
-        return html`<vaadin-tabsheet>
-            <vaadin-tabs slot="tabs" @selected-changed=${this.onTabChange}>
-                <vaadin-tab id="query-params-tab">Parameters</vaadin-tab>
-                <vaadin-tab id="body-tab">Body</vaadin-tab>
-                <vaadin-tab id="headers-tab">Headers</vaadin-tab>
-                <vaadin-tab id="auth-tab">Authorization</vaadin-tab>
-            </vaadin-tabs>
+        return html`
+            <vaadin-vertical-layout
+                theme="padding"
+                style="align-items: stretch"
+            >
+                <url-bar></url-bar>
+                <vaadin-tabsheet>
+                    <vaadin-tabs
+                        slot="tabs"
+                        @selected-changed=${this.onTabChange}
+                    >
+                        <vaadin-tab id="query-params-tab"
+                            >Parameters</vaadin-tab
+                        >
+                        <vaadin-tab id="body-tab">Body</vaadin-tab>
+                        <vaadin-tab id="headers-tab">Headers</vaadin-tab>
+                        <vaadin-tab id="auth-tab">Authorization</vaadin-tab>
+                    </vaadin-tabs>
 
-            ${this.renderControls()}
+                    ${this.renderControls()}
 
-            <query-params tab="query-params-tab"></query-params>
-            <request-body tab="body-tab"></request-body>
-            <request-headers tab="headers-tab"></request-headers>
-            <request-auth tab="auth-tab"></request-auth>
-        </vaadin-tabsheet>`;
+                    <query-params tab="query-params-tab"></query-params>
+                    <request-body tab="body-tab"></request-body>
+                    <request-headers tab="headers-tab"></request-headers>
+                    <request-auth tab="auth-tab"></request-auth>
+                </vaadin-tabsheet>
+            </vaadin-vertical-layout>
+        `;
     }
 
     private renderControls() {

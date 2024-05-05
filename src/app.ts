@@ -1,12 +1,20 @@
-import "@vaadin/vertical-layout";
+import "@vaadin/split-layout";
 import "./request/panel.js";
-import "./request/url-bar.js";
+import "./response/panel.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { Properties, RequestState, requestContext } from "./request/state.js";
+import { Request, RequestAuth, RequestBody, fetch } from "./fetch.js";
+import {
+    AuthorizationType,
+    RequestBodyType,
+    RequestState,
+    ResponseState,
+    requestContext,
+    responseContext,
+} from "./request/state.js";
 
 @customElement("vin-app")
 export class VinateeApp extends MobxLitElement {
@@ -14,41 +22,83 @@ export class VinateeApp extends MobxLitElement {
     @state()
     private requestState = new RequestState();
 
+    @provide({ context: responseContext })
+    @state()
+    private responseState = new ResponseState();
+
     override render() {
-        return html`<vaadin-vertical-layout
-            theme="spacing padding"
-            style="align-items: stretch"
-        >
-            <url-bar @send=${this.onSend}></url-bar>
-            <request-properties></request-properties>
-        </vaadin-vertical-layout>`;
+        return html`<vaadin-split-layout orientation="vertical">
+            <request-panel
+                style="min-height: 200px; height: 40%"
+                @send=${this.onSend}
+            ></request-panel>
+            <response-panel style="min-height: 300px;"></response-panel>
+        </vaadin-split-layout> `;
     }
 
-    private onSend() {
-        console.log("Send request");
-        console.log(this.requestState.method, this.requestState.url);
+    private async onSend() {
+        this.responseState.clear();
+        const authState = this.requestState.authorization;
+        let auth: RequestAuth;
+        switch (authState.type) {
+            case AuthorizationType.basic:
+                auth = {
+                    type: "basic",
+                    username: authState.basicUsername,
+                    password: authState.basicUsername,
+                };
+                break;
+            case AuthorizationType.bearer:
+                auth = { type: "bearer", token: authState.bearerToken };
+                break;
+            case AuthorizationType.none:
+                auth = { type: "none" };
+                break;
+        }
 
-        printProperties("Headers:", this.requestState.headers);
-        printProperties("Parameters:", this.requestState.params);
+        let bodyState = this.requestState.body;
+        let body: RequestBody;
+        switch (bodyState.type) {
+            case RequestBodyType.none:
+                body = { type: "none" };
+                break;
+            case RequestBodyType.text:
+                body = { type: "text", text: bodyState.text.toString() };
+                break;
+            case RequestBodyType.json:
+                body = { type: "json", json: bodyState.json.toString() };
+                break;
+            case RequestBodyType.urlEncoded:
+                body = { type: "form", form: bodyState.urlEncoded.entries };
+                break;
+            case RequestBodyType.file:
+                body = { type: "file", path: bodyState.file };
+        }
 
-        console.log("Body:");
-        console.log("Type=", this.requestState.body.type);
-        console.log("Text=", this.requestState.body.text.toString());
-        console.log("JSON=", this.requestState.body.json.toString());
-        printProperties("URL Encoded form:", this.requestState.body.urlEncoded);
-        console.log("File=", this.requestState.body.file);
+        const request: Request = {
+            url: this.requestState.url,
+            method: this.requestState.method,
+            params: this.requestState.params.entries,
+            headers: this.requestState.headers.entries,
+            auth,
+            body,
+        };
 
-        console.log("Authorization:");
-        console.log("Type=", this.requestState.authorization.type);
-        console.log("Token=", this.requestState.authorization.bearerToken);
-        console.log("Username=", this.requestState.authorization.basicUsername);
-        console.log("Password=", this.requestState.authorization.basicPassword);
-    }
-}
-
-function printProperties(title: string, properties: Properties) {
-    console.log(title);
-    for (const p of properties.entries) {
-        console.log(`${p.name} = ${p.value} (enabled=${p.enabled})`);
+        try {
+            const { response, headTime, totalTime } = await fetch(request, {
+                acceptInvalidCerts: true,
+            });
+            const body = await response.arrayBuffer();
+            this.responseState.setResponse(
+                response.status,
+                response.statusText,
+                response.headers,
+                body,
+                headTime,
+                totalTime
+            );
+        } catch (err) {
+            this.responseState.setError(JSON.stringify(err));
+        }
     }
 }
