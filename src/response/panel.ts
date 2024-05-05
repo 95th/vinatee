@@ -76,15 +76,10 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vaadin-tabsheet>
-                    <vaadin-tabs
-                        slot="tabs"
-                        @selected-changed=${this.onTabChange}
-                    >
-                        ${this.renderTabs()}
-                    </vaadin-tabs>
-                    ${this.renderControls()} ${this.renderTabContents()}
-                </vaadin-tabsheet>
+                <vaadin-tabs @selected-changed=${this.onTabChange}>
+                    ${this.renderTabs()} ${this.renderControls()}
+                </vaadin-tabs>
+                ${this.renderTabContents()}
             </vaadin-vertical-layout>
         `;
     }
@@ -96,29 +91,29 @@ export class ResponsePanel extends MobxLitElement {
     }
 
     private renderTabContents() {
-        return repeat(this.tabs, (tab) => {
-            if (tab === "JSON") {
+        const tab = this.tabs[this.selectedTabIndex];
+        switch (tab) {
+            case "JSON":
                 return html`<json-response
                     tab=${tab}
                     .body=${this.state.body}
                     .prettify=${this.jsonPrettify}
                     .wrapLines=${this.wrapLines}
                 ></json-response>`;
-            } else if (tab === "Text") {
+            case "Text":
                 return html`<text-response
                     tab=${tab}
                     .body=${this.state.body}
                     .wrapLines=${this.wrapLines}
                 ></text-response>`;
-            } else if (tab === "Headers") {
+            case "Headers":
                 return html`<response-headers
                     tab=${tab}
                     .headers=${this.state.headers}
                 ></response-headers>`;
-            } else {
+            default:
                 return nothing;
-            }
-        });
+        }
     }
 
     private renderControls() {
