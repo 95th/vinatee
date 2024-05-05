@@ -7,39 +7,42 @@ use tokio::fs::File;
 
 #[derive(Deserialize)]
 #[serde(default)]
-pub struct VinateeRequest {
-    pub method: String,
-    pub url: String,
-    pub params: Vec<Property>,
-    pub headers: Vec<Property>,
-    pub body: VinateeRequestBody,
-    pub auth: VinateeRequestAuth,
-
-    /// Timeout in seconds
-    pub connect_timeout: Option<u64>,
-
-    /// Disable SSL verification
-    pub disable_ssl_verify: bool,
+pub struct Request {
+    method: String,
+    url: String,
+    params: Vec<Property>,
+    headers: Vec<Property>,
+    body: RequestBody,
+    auth: RequestAuth,
 }
 
-impl Default for VinateeRequest {
+impl Default for Request {
     fn default() -> Self {
         Self {
             method: String::from("GET"),
             url: Default::default(),
             params: Default::default(),
             headers: Default::default(),
-            body: VinateeRequestBody::None,
-            auth: VinateeRequestAuth::None,
-            connect_timeout: Some(30),
-            disable_ssl_verify: false,
+            body: RequestBody::None,
+            auth: RequestAuth::None,
         }
     }
 }
 
+#[derive(Default, Deserialize)]
+#[serde(default)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientOptions {
+    /// Timeout in seconds
+    connect_timeout: Option<u64>,
+
+    /// Disable SSL verification
+    accept_invalid_certs: Option<bool>,
+}
+
 #[derive(Deserialize)]
 #[serde(tag = "type")]
-pub enum VinateeRequestBody {
+enum RequestBody {
     #[serde(rename = "none")]
     None,
     #[serde(rename = "json")]
@@ -54,7 +57,7 @@ pub enum VinateeRequestBody {
 
 #[derive(Deserialize)]
 #[serde(tag = "type")]
-pub enum VinateeRequestAuth {
+enum RequestAuth {
     #[serde(rename = "none")]
     None,
 
@@ -66,10 +69,10 @@ pub enum VinateeRequestAuth {
 }
 
 #[derive(Deserialize)]
-pub struct Property {
-    pub name: String,
-    pub value: String,
-    pub enabled: bool,
+struct Property {
+    name: String,
+    value: String,
+    enabled: bool,
 }
 
 #[derive(Serialize)]
@@ -81,12 +84,13 @@ pub enum Error {
 }
 
 #[tauri::command]
-pub async fn fetch(request: VinateeRequest) -> Result<u16, Error> {
-    let mut client_builder = reqwest::Client::builder()
-        .user_agent("Vinatee/0.1")
-        .danger_accept_invalid_certs(request.disable_ssl_verify);
+pub async fn fetch(request: Request, options: ClientOptions) -> Result<u16, Error> {
+    let mut client_builder = reqwest::Client::builder().user_agent("Vinatee/0.1");
+    if let Some(accept_invalid_certs) = options.accept_invalid_certs {
+        client_builder = client_builder.danger_accept_invalid_certs(accept_invalid_certs);
+    }
 
-    if let Some(connect_timeout) = request.connect_timeout {
+    if let Some(connect_timeout) = options.connect_timeout {
         client_builder = client_builder.connect_timeout(Duration::from_secs(connect_timeout));
     }
 
@@ -113,32 +117,30 @@ pub async fn fetch(request: VinateeRequest) -> Result<u16, Error> {
     }
 
     match request.auth {
-        VinateeRequestAuth::None => (),
-        VinateeRequestAuth::Basic { username, password } => {
+        RequestAuth::None => (),
+        RequestAuth::Basic { username, password } => {
             request_builder = request_builder.basic_auth(username, Some(password))
         }
-        VinateeRequestAuth::Bearer { token } => {
-            request_builder = request_builder.bearer_auth(token)
-        }
+        RequestAuth::Bearer { token } => request_builder = request_builder.bearer_auth(token),
     }
 
     match request.body {
-        VinateeRequestBody::None => (),
-        VinateeRequestBody::Text { text } => {
+        RequestBody::None => (),
+        RequestBody::Text { text } => {
             request_builder = request_builder.body(text);
             if !has_content_type_header {
                 request_builder =
                     request_builder.header(CONTENT_TYPE, HeaderValue::from_static("text/plain"));
             }
         }
-        VinateeRequestBody::Json { json } => {
+        RequestBody::Json { json } => {
             request_builder = request_builder.body(json);
             if !has_content_type_header {
                 request_builder = request_builder
                     .header(CONTENT_TYPE, HeaderValue::from_static("application/json"));
             }
         }
-        VinateeRequestBody::File { path } => {
+        RequestBody::File { path } => {
             let file = File::open(path)
                 .await
                 .map_err(|e| Error::File(e.to_string()))?;
@@ -151,7 +153,7 @@ pub async fn fetch(request: VinateeRequest) -> Result<u16, Error> {
                 );
             }
         }
-        VinateeRequestBody::Form { form } => {
+        RequestBody::Form { form } => {
             let form: Vec<(String, String)> = form
                 .into_iter()
                 .filter(|p| p.enabled && !p.name.is_empty())

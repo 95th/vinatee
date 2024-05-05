@@ -4,9 +4,9 @@ import "./request/url-bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
-import { invoke } from "@tauri-apps/api/core";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { Request, RequestAuth, RequestBody, fetch } from "./fetch.js";
 import {
     AuthorizationType,
     RequestBodyType,
@@ -32,7 +32,7 @@ export class VinateeApp extends MobxLitElement {
 
     private async onSend() {
         const authState = this.requestState.authorization;
-        let auth: unknown;
+        let auth: RequestAuth;
         switch (authState.type) {
             case AuthorizationType.basic:
                 auth = {
@@ -50,16 +50,16 @@ export class VinateeApp extends MobxLitElement {
         }
 
         let bodyState = this.requestState.body;
-        let body: unknown;
+        let body: RequestBody;
         switch (bodyState.type) {
             case RequestBodyType.none:
                 body = { type: "none" };
                 break;
             case RequestBodyType.text:
-                body = { type: "text", text: bodyState.text };
+                body = { type: "text", text: bodyState.text.toString() };
                 break;
             case RequestBodyType.json:
-                body = { type: "json", json: bodyState.json };
+                body = { type: "json", json: bodyState.json.toString() };
                 break;
             case RequestBodyType.urlEncoded:
                 body = { type: "form", form: bodyState.urlEncoded.entries };
@@ -68,18 +68,17 @@ export class VinateeApp extends MobxLitElement {
                 body = { type: "file", path: bodyState.file };
         }
 
-        const request = {
+        const request: Request = {
             url: this.requestState.url,
             method: this.requestState.method,
             params: this.requestState.params.entries,
             headers: this.requestState.headers.entries,
             auth,
             body,
-            disable_ssl_verify: false,
         };
 
         try {
-            const code = await invoke("fetch", { request });
+            const code = await fetch(request);
             console.log(code);
         } catch (err) {
             console.log(err);
