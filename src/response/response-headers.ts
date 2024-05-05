@@ -1,4 +1,5 @@
 import "@vaadin/grid";
+import "@vaadin/grid/vaadin-grid-sort-column.js";
 
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
@@ -14,10 +15,10 @@ export class ResponseHeadersPanel extends LitElement {
         );
         return html`
             <vaadin-grid .items="${headers}">
-                <vaadin-grid-column
+                <vaadin-grid-sort-column
                     header="Name"
                     path="name"
-                ></vaadin-grid-column>
+                ></vaadin-grid-sort-column>
                 <vaadin-grid-column
                     header="Value"
                     path="value"
