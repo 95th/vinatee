@@ -6,7 +6,7 @@ import "@vaadin/icons";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
-import { open } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/plugin-dialog";
 import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
@@ -54,7 +54,7 @@ export class FileBody extends MobxLitElement {
     private async selectFile() {
         const selected = await open({ multiple: false });
         if (selected) {
-            this.state.body.setFile(selected as string);
+            this.state.body.setFile(selected.path);
         }
     }
 
