@@ -19,6 +19,10 @@ export class VinEditor extends LitElement {
         .cm-scroller {
             font-family: Consolas, "SF Mono", "Fira Code", monospace;
         }
+
+        div.cm-content.cm-lineWrapping {
+            word-break: break-all;
+        }
     `;
 
     @property({ attribute: false })
