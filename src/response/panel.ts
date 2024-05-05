@@ -1,3 +1,4 @@
+import "@vaadin/horizontal-layout";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
@@ -7,10 +8,11 @@ import "./response-headers.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { ResponseState, responseContext } from "../request/state.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("response-panel")
 export class ResponsePanel extends MobxLitElement {
@@ -26,7 +28,9 @@ export class ResponsePanel extends MobxLitElement {
         }
 
         const tabs = [];
-        const contentType = this.state.headers.get("Content-Type");
+        const contentType = this.state.headers
+            .get("Content-Type")
+            ?.split(";")[0];
         if (
             contentType?.includes("application/json") ||
             contentType?.endsWith("+json")
@@ -45,7 +49,10 @@ export class ResponsePanel extends MobxLitElement {
             >
                 <response-summary
                     .status=${this.state.status}
+                    .statusText=${this.state.statusText}
                     .contentType=${contentType}
+                    .headTime=${this.state.headTime}
+                    .totalTime=${this.state.totalTime}
                 ></response-summary>
                 <vaadin-tabsheet>
                     <vaadin-tabs
@@ -111,18 +118,59 @@ export class ResponsePanel extends MobxLitElement {
 
 @customElement("response-summary")
 export class ResponseSummary extends LitElement {
+    static override styles = css`
+        :host {
+            font-family: var(--lumo-font-family);
+            font-size: var(--lumo-font-size-s);
+            line-height: var(--lumo-line-height-s);
+            color: var(--lumo-body-text-color);
+        }
+    `;
+
     @property({ type: Number, attribute: false })
     status = 0;
 
     @property({ type: String, attribute: false })
+    statusText = "";
+
+    @property({ type: String, attribute: false })
     contentType = "";
 
+    @property({ type: Number, attribute: false })
+    headTime = 0;
+
+    @property({ type: Number, attribute: false })
+    totalTime = 0;
+
     override render() {
+        const isOk = this.status >= 200 && this.status < 300;
+        const color = isOk
+            ? "var(--lumo-success-text-color)"
+            : "var(--lumo-error-text-color)";
         return html`
-            <div>
-                <strong>Status:</strong> ${this.status}
-                <strong>Content-Type:</strong> ${this.contentType}
-            </div>
+            <vaadin-horizontal-layout theme="spacing-l">
+                <vaadin-horizontal-layout theme="spacing-s">
+                    <span>Status:</span>
+                    <span style=${styleMap({ color })}
+                        >${this.status} - ${this.statusText}
+                    </span>
+                </vaadin-horizontal-layout>
+                <span>|</span>
+                <vaadin-horizontal-layout theme="spacing-s">
+                    <span>Time:</span>
+                    <span style=${styleMap({ color })}>
+                        ${Math.round(this.totalTime)} ms (Head:
+                        ${Math.round(this.headTime)} ms)
+                    </span>
+                </vaadin-horizontal-layout>
+                <span>|</span>
+                <vaadin-horizontal-layout theme="spacing-s">
+                    <span>Content-Type:</span>
+                    <span style=${styleMap({ color })}
+                        >${this.contentType}</span
+                    >
+                </vaadin-horizontal-layout>
+            </vaadin-horizontal-layout>
         `;
     }
 }

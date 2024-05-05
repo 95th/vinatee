@@ -85,14 +85,17 @@ export class VinateeApp extends MobxLitElement {
         };
 
         try {
-            const response = await fetch(request, {
+            const { response, headTime, totalTime } = await fetch(request, {
                 acceptInvalidCerts: true,
             });
             const body = await response.arrayBuffer();
             this.responseState.setResponse(
                 response.status,
+                response.statusText,
                 response.headers,
-                body
+                body,
+                headTime,
+                totalTime
             );
         } catch (err) {
             this.responseState.setError(JSON.stringify(err));

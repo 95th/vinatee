@@ -88,6 +88,7 @@ pub enum Error {
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     status: u16,
+    status_text: String,
     headers: Vec<(String, String)>,
     rid: ResourceId,
 }
@@ -212,6 +213,7 @@ where
 
     Ok(Response {
         status: status.as_u16(),
+        status_text: status.canonical_reason().unwrap_or_default().to_string(),
         headers,
         rid,
     })

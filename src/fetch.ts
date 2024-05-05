@@ -72,21 +72,33 @@ interface Property {
 
 interface IpcResponseHead {
     status: number;
+    statusText: string;
     headers: [string, string][];
     rid: number;
+}
+
+export interface FetchResponse {
+    response: Response;
+    headTime: number;
+    totalTime: number;
 }
 
 export async function fetch(
     request: Request,
     options: ClientOptions = {}
-): Promise<Response> {
+): Promise<FetchResponse> {
+    const start = performance.now();
     const head: IpcResponseHead = await invoke("fetch", { request, options });
+    const headTime = performance.now() - start;
     const body: ArrayBuffer = await invoke("fetch_read_body", {
         rid: head.rid,
     });
+    const totalTime = performance.now() - start;
 
-    return new Response(body, {
+    const response = new Response(body, {
         headers: head.headers,
         status: head.status,
+        statusText: head.statusText,
     });
+    return { response, headTime, totalTime };
 }
