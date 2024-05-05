@@ -21,7 +21,7 @@ export class VinateeApp extends MobxLitElement {
     static override styles = css`
         :host {
             display: block;
-            height: 100%;
+            height: 100vh;
             padding: 0;
             margin: 0;
         }
@@ -42,10 +42,12 @@ export class VinateeApp extends MobxLitElement {
             style="height: 100%"
         >
             <request-panel
-                style="min-height: 200px;"
+                style="min-height: 200px; height: 40%;"
                 @send=${this.onSend}
             ></request-panel>
-            <response-panel style="min-height: 200px;"></response-panel>
+            <response-panel
+                style="min-height: 200px; height: 60%"
+            ></response-panel>
         </vaadin-split-layout> `;
     }
 

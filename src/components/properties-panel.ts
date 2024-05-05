@@ -5,7 +5,6 @@ import "@vaadin/icon";
 import "@vaadin/icons";
 import "@vaadin/text-field";
 import "@vaadin/tooltip";
-import "@vaadin/vertical-layout";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { CheckboxCheckedChangedEvent } from "@vaadin/checkbox";
@@ -28,17 +27,6 @@ export class PropertiesPanel extends MobxLitElement {
     }
 
     override render() {
-        return html`
-            <vaadin-vertical-layout
-                theme="spacing-xs"
-                style="align-items: stretch"
-            >
-                ${this.renderPropertyRows()}
-            </vaadin-vertical-layout>
-        `;
-    }
-
-    private renderPropertyRows() {
         return this.properties.entries.map(
             (property, index) => html`
                 <property-row
