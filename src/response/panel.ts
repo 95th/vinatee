@@ -101,17 +101,20 @@ export class ResponsePanel extends MobxLitElement {
                 return html`<json-response
                     tab=${tab}
                     .body=${this.state.body}
+                    .prettify=${this.jsonPrettify}
+                    .wrapLines=${this.wrapLines}
                 ></json-response>`;
+            } else if (tab === "Text") {
+                return html`<text-response
+                    tab=${tab}
+                    .body=${this.state.body}
+                    .wrapLines=${this.wrapLines}
+                ></text-response>`;
             } else if (tab === "Headers") {
                 return html`<response-headers
                     tab=${tab}
                     .headers=${this.state.headers}
                 ></response-headers>`;
-            } else if (tab === "Text") {
-                return html`<text-response
-                    tab=${tab}
-                    .body=${this.state.body}
-                ></text-response>`;
             } else {
                 return nothing;
             }
@@ -146,7 +149,7 @@ export class ResponsePanel extends MobxLitElement {
                     >Wrap lines</toggle-button
                 >`;
             default:
-                return nothing;
+                return html`<div slot="suffix" style="height: 2.75rem"></div>`;
         }
     }
 

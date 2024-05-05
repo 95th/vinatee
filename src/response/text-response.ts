@@ -9,12 +9,15 @@ export class TextResponse extends LitElement {
     @property({ attribute: false })
     body = new ArrayBuffer(0);
 
+    @property({ attribute: false })
+    wrapLines = false;
+
     override render() {
         const text = new TextDecoder().decode(this.body);
         const json = Text.of(text.split("\n"));
         return html`<vin-editor
             .value=${json}
-            .wrapLines=${false}
+            .wrapLines=${this.wrapLines}
             readonly="true"
         ></vin-editor>`;
     }
