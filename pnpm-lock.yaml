@@ -56,6 +56,9 @@ dependencies:
   '@vaadin/select':
     specifier: ^24.3.11
     version: 24.3.11
+  '@vaadin/split-layout':
+    specifier: ^24.3.11
+    version: 24.3.11
   '@vaadin/tabs':
     specifier: ^24.3.11
     version: 24.3.11
@@ -873,6 +876,17 @@ packages:
       '@vaadin/list-box': 24.3.11
       '@vaadin/lit-renderer': 24.3.11
       '@vaadin/overlay': 24.3.11
+      '@vaadin/vaadin-lumo-styles': 24.3.11
+      '@vaadin/vaadin-material-styles': 24.3.11
+      '@vaadin/vaadin-themable-mixin': 24.3.11
+    dev: false
+
+  /@vaadin/split-layout@24.3.11:
+    resolution: {integrity: sha512-m4jDtWwWl+LqNvJiEJtcKSceVzum7y+hQQRA7P2MAiRK8SAsbnSBBVnld32lW45NOZji5hX1rsJGMcrbzjO7UA==}
+    dependencies:
+      '@open-wc/dedupe-mixin': 1.4.0
+      '@polymer/polymer': 3.5.1
+      '@vaadin/component-base': 24.3.11
       '@vaadin/vaadin-lumo-styles': 24.3.11
       '@vaadin/vaadin-material-styles': 24.3.11
       '@vaadin/vaadin-themable-mixin': 24.3.11

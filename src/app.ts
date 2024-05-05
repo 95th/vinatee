@@ -1,6 +1,6 @@
-import "@vaadin/vertical-layout";
+import "@vaadin/split-layout";
 import "./request/panel.js";
-import "./request/url-bar.js";
+import "./response/panel.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
@@ -11,7 +11,9 @@ import {
     AuthorizationType,
     RequestBodyType,
     RequestState,
+    ResponseState,
     requestContext,
+    responseContext,
 } from "./request/state.js";
 
 @customElement("vin-app")
@@ -20,17 +22,22 @@ export class VinateeApp extends MobxLitElement {
     @state()
     private requestState = new RequestState();
 
+    @provide({ context: responseContext })
+    @state()
+    private responseState = new ResponseState();
+
     override render() {
-        return html`<vaadin-vertical-layout
-            theme="spacing padding"
-            style="align-items: stretch"
-        >
-            <url-bar @send=${this.onSend}></url-bar>
-            <request-properties></request-properties>
-        </vaadin-vertical-layout>`;
+        return html`<vaadin-split-layout orientation="vertical">
+            <request-panel
+                style="min-height: 200px; height: 40%"
+                @send=${this.onSend}
+            ></request-panel>
+            <response-panel style="min-height: 300px;"></response-panel>
+        </vaadin-split-layout> `;
     }
 
     private async onSend() {
+        this.responseState.clear();
         const authState = this.requestState.authorization;
         let auth: RequestAuth;
         switch (authState.type) {
@@ -81,10 +88,14 @@ export class VinateeApp extends MobxLitElement {
             const response = await fetch(request, {
                 acceptInvalidCerts: true,
             });
-            console.log(response.status);
-            console.log(await response.text());
+            const body = await response.arrayBuffer();
+            this.responseState.setResponse(
+                response.status,
+                response.headers,
+                body
+            );
         } catch (err) {
-            console.log(err);
+            this.responseState.setError(JSON.stringify(err));
         }
     }
 }

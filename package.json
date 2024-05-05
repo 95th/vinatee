@@ -28,6 +28,7 @@
         "@vaadin/icon": "^24.3.11",
         "@vaadin/icons": "^24.3.11",
         "@vaadin/select": "^24.3.11",
+        "@vaadin/split-layout": "^24.3.11",
         "@vaadin/tabs": "^24.3.11",
         "@vaadin/tabsheet": "^24.3.11",
         "@vaadin/text-area": "^24.3.11",

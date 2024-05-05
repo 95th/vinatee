@@ -5,6 +5,9 @@ import { action, makeObservable, observable } from "mobx";
 export const requestContext = createContext<RequestState>(
     Symbol("request-context")
 );
+export const responseContext = createContext<RequestState>(
+    Symbol("response-context")
+);
 
 export class Property {
     @observable
@@ -177,5 +180,43 @@ export class RequestState {
     @action
     setUrl(url: string) {
         this.url = url;
+    }
+}
+
+export class ResponseState {
+    @observable
+    status = 0;
+
+    @observable
+    body: ArrayBuffer = new ArrayBuffer(0);
+
+    @observable
+    headers = new Headers();
+
+    @observable
+    error = "";
+
+    constructor() {
+        makeObservable(this);
+    }
+
+    @action
+    setResponse(status: number, headers: Headers, body: ArrayBuffer) {
+        this.status = status;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    @action
+    setError(error: string) {
+        this.error = error;
+    }
+
+    @action
+    clear() {
+        this.status = 0;
+        this.body = new ArrayBuffer(0);
+        this.headers = new Headers();
+        this.error = "";
     }
 }
