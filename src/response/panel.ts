@@ -2,6 +2,7 @@ import "@vaadin/horizontal-layout";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
+import "./text-response.js";
 import "./json-response.js";
 import "./response-headers.js";
 
@@ -87,7 +88,10 @@ export class ResponsePanel extends MobxLitElement {
                     .headers=${this.state.headers}
                 ></response-headers>`;
             } else if (tab === "Text") {
-                return html`<div tab=${tab}>${this.state.body}</div>`;
+                return html`<text-response
+                    tab=${tab}
+                    .body=${this.state.body}
+                ></text-response>`;
             } else {
                 return nothing;
             }
