@@ -7,7 +7,10 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![request::fetch])
+        .invoke_handler(tauri::generate_handler![
+            request::fetch,
+            request::fetch_read_body
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -1,8 +1,8 @@
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use reqwest::{header::CONTENT_TYPE, Method};
 use serde::{Deserialize, Serialize};
-use tauri::http::HeaderValue;
+use tauri::{http::HeaderValue, Manager, ResourceId, Runtime, Webview};
 use tokio::fs::File;
 
 #[derive(Deserialize)]
@@ -80,11 +80,31 @@ pub enum Error {
     File(String),
     Form(String),
     Request(String),
+    InvalidResponseHeader,
     ResponseBodyRead(String),
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Response {
+    status: u16,
+    headers: Vec<(String, String)>,
+    rid: ResourceId,
+}
+
+struct ResponseResource(reqwest::Response);
+
+impl tauri::Resource for ResponseResource {}
+
 #[tauri::command]
-pub async fn fetch(request: Request, options: ClientOptions) -> Result<u16, Error> {
+pub async fn fetch<R>(
+    request: Request,
+    options: ClientOptions,
+    webview: Webview<R>,
+) -> Result<Response, Error>
+where
+    R: Runtime,
+{
     let mut client_builder = reqwest::Client::builder().user_agent("Vinatee/0.1");
     if let Some(accept_invalid_certs) = options.accept_invalid_certs {
         client_builder = client_builder.danger_accept_invalid_certs(accept_invalid_certs);
@@ -175,11 +195,46 @@ pub async fn fetch(request: Request, options: ClientOptions) -> Result<u16, Erro
         .await
         .map_err(|e| Error::Request(e.to_string()))?;
     let status = response.status();
+
+    let mut headers = Vec::new();
+
+    for (k, v) in response.headers().iter() {
+        headers.push((
+            k.to_string(),
+            v.to_str()
+                .map_err(|_| Error::InvalidResponseHeader)?
+                .to_owned(),
+        ));
+    }
+
+    let mut resources = webview.resources_table();
+    let rid = resources.add(ResponseResource(response));
+
+    Ok(Response {
+        status: status.as_u16(),
+        headers,
+        rid,
+    })
+}
+
+#[tauri::command]
+pub async fn fetch_read_body<R>(
+    webview: Webview<R>,
+    rid: ResourceId,
+) -> Result<tauri::ipc::Response, Error>
+where
+    R: Runtime,
+{
+    let response = {
+        let mut resources = webview.resources_table();
+        resources
+            .take::<ResponseResource>(rid)
+            .map_err(|_| Error::ResponseBodyRead("Cannot read response".to_string()))?
+    };
+    let response = Arc::into_inner(response).unwrap().0;
     let body = response
-        .text()
+        .bytes()
         .await
         .map_err(|e| Error::ResponseBodyRead(e.to_string()))?;
-    println!("{body}");
-
-    Ok(status.as_u16())
+    Ok(tauri::ipc::Response::new(Vec::from(body)))
 }

@@ -78,8 +78,11 @@ export class VinateeApp extends MobxLitElement {
         };
 
         try {
-            const code = await fetch(request);
-            console.log(code);
+            const response = await fetch(request, {
+                acceptInvalidCerts: true,
+            });
+            console.log(response.status);
+            console.log(await response.text());
         } catch (err) {
             console.log(err);
         }

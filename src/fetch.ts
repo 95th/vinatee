@@ -70,9 +70,23 @@ interface Property {
     enabled: boolean;
 }
 
-export function fetch(
+interface IpcResponseHead {
+    status: number;
+    headers: [string, string][];
+    rid: number;
+}
+
+export async function fetch(
     request: Request,
     options: ClientOptions = {}
-): Promise<number> {
-    return invoke("fetch", { request, options });
+): Promise<Response> {
+    const head: IpcResponseHead = await invoke("fetch", { request, options });
+    const body: ArrayBuffer = await invoke("fetch_read_body", {
+        rid: head.rid,
+    });
+
+    return new Response(body, {
+        headers: head.headers,
+        status: head.status,
+    });
 }
