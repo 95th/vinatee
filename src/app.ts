@@ -4,7 +4,7 @@ import "./response/panel.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
-import { html } from "lit";
+import { css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Request, RequestAuth, RequestBody, fetch } from "./fetch.js";
 import {
@@ -18,6 +18,15 @@ import {
 
 @customElement("vin-app")
 export class VinateeApp extends MobxLitElement {
+    static override styles = css`
+        :host {
+            display: block;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+    `;
+
     @provide({ context: requestContext })
     @state()
     private requestState = new RequestState();
@@ -27,12 +36,18 @@ export class VinateeApp extends MobxLitElement {
     private responseState = new ResponseState();
 
     override render() {
-        return html`<vaadin-split-layout orientation="vertical">
+        return html`<vaadin-split-layout
+            orientation="vertical"
+            theme="small"
+            style="height: 100%"
+        >
             <request-panel
-                style="min-height: 200px; height: 40%"
+                style="min-height: 200px; height: 40%;"
                 @send=${this.onSend}
             ></request-panel>
-            <response-panel style="min-height: 300px;"></response-panel>
+            <response-panel
+                style="min-height: 200px; height: 60%"
+            ></response-panel>
         </vaadin-split-layout> `;
     }
 

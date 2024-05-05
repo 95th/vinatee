@@ -201,7 +201,7 @@ export class ResponseSummary extends LitElement {
             ? "var(--lumo-success-text-color)"
             : "var(--lumo-error-text-color)";
         return html`
-            <vaadin-horizontal-layout theme="spacing-l">
+            <vaadin-horizontal-layout theme="spacing-l padding">
                 <vaadin-horizontal-layout theme="spacing-s">
                     <span>Status:</span>
                     <span style=${styleMap({ color })}
