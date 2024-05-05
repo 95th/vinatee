@@ -2,9 +2,10 @@ import "@vaadin/horizontal-layout";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
-import "./text-response.js";
+import "../components/toggle-button.js";
 import "./json-response.js";
 import "./response-headers.js";
+import "./text-response.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
@@ -12,8 +13,8 @@ import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
-import { ResponseState, responseContext } from "../request/state.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { ResponseState, responseContext } from "../request/state.js";
 
 @customElement("response-panel")
 export class ResponsePanel extends MobxLitElement {
@@ -25,6 +26,12 @@ export class ResponsePanel extends MobxLitElement {
 
     @state()
     private tabs: string[] = [];
+
+    @state()
+    wrapLines = false;
+
+    @state()
+    jsonPrettify = false;
 
     private contentType() {
         return this.state.headers.get("Content-Type")?.split(";")[0];
@@ -76,7 +83,7 @@ export class ResponsePanel extends MobxLitElement {
                     >
                         ${this.renderTabs()}
                     </vaadin-tabs>
-                    ${this.renderTabContents()}
+                    ${this.renderControls()} ${this.renderTabContents()}
                 </vaadin-tabsheet>
             </vaadin-vertical-layout>
         `;
@@ -111,25 +118,48 @@ export class ResponsePanel extends MobxLitElement {
         });
     }
 
-    // private renderControls() {
-    //     switch (this.selectedTabIndex) {
-    //         case 0:
-    //             return html`<properties-controls
-    //                 slot="suffix"
-    //                 .properties=${this.state.params}
-    //             ></properties-controls>`;
-    //         case 2:
-    //             return html`<properties-controls
-    //                 slot="suffix"
-    //                 .properties=${this.state.headers}
-    //             ></properties-controls>`;
-    //         default:
-    //             return html`<div slot="suffix" style="height: 2.75rem"></div>`;
-    //     }
-    // }
+    private renderControls() {
+        switch (this.tabs[this.selectedTabIndex]) {
+            case "JSON":
+                return html`<vaadin-horizontal-layout
+                    slot="suffix"
+                    theme="spacing"
+                    style="justify-content: flex-end"
+                >
+                    <toggle-button
+                        .value=${this.jsonPrettify}
+                        @toggle=${this.onJsonPrettifyToggle}
+                    >
+                        Prettify
+                    </toggle-button>
+                    <toggle-button
+                        .value=${this.wrapLines}
+                        @toggle=${this.onWrapLinesToggle}
+                        >Wrap lines</toggle-button
+                    >
+                </vaadin-horizontal-layout>`;
+            case "Text":
+                return html` <toggle-button
+                    slot="suffix"
+                    .value=${this.wrapLines}
+                    @toggle=${this.onWrapLinesToggle}
+                    >Wrap lines</toggle-button
+                >`;
+            default:
+                return nothing;
+        }
+    }
 
     private onTabChange(e: TabSheetSelectedChangedEvent) {
         this.selectedTabIndex = e.detail.value;
+    }
+
+    private onJsonPrettifyToggle() {
+        this.jsonPrettify = !this.jsonPrettify;
+    }
+
+    private onWrapLinesToggle() {
+        this.wrapLines = !this.wrapLines;
     }
 }
 

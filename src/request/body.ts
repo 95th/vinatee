@@ -4,6 +4,7 @@ import "@vaadin/icon";
 import "@vaadin/icons";
 import "@vaadin/select";
 import "@vaadin/vertical-layout";
+import "../components/toggle-button.js";
 import "./file.js";
 import "./json-editor.js";
 import "./text-editor.js";
@@ -13,8 +14,8 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
-import { LitElement, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { html, nothing } from "lit";
+import { customElement, state } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
@@ -69,16 +70,20 @@ export class RequestBody extends MobxLitElement {
                         ></vaadin-icon>
                         Minify
                     </vaadin-button>
-                    <line-wrap-button
+                    <toggle-button
                         .value=${this.wrapLines}
                         @toggle=${this.onWrapLinesToggle}
-                    ></line-wrap-button>
+                    >
+                        Wrap lines
+                    </toggle-button>
                 </vaadin-horizontal-layout>`;
             case RequestBodyType.text:
-                return html`<line-wrap-button
+                return html`<toggle-button
                     .value=${this.wrapLines}
                     @toggle=${this.onWrapLinesToggle}
-                ></line-wrap-button>`;
+                >
+                    Wrap lines
+                </toggle-button>`;
             case RequestBodyType.urlEncoded:
                 return html`<properties-controls
                     .properties=${this.state.body.urlEncoded}
@@ -136,27 +141,5 @@ export class RequestBody extends MobxLitElement {
 
     private onWrapLinesToggle() {
         this.wrapLines = !this.wrapLines;
-    }
-}
-
-@customElement("line-wrap-button")
-export class LineWrapButton extends LitElement {
-    @property()
-    value = false;
-
-    override render() {
-        return html`<vaadin-button theme="tertiary" @click=${this.onWrapToggle}>
-            <vaadin-icon
-                icon=${this.value
-                    ? "vaadin:check-square-o"
-                    : "vaadin:thin-square"}
-                slot="prefix"
-            ></vaadin-icon>
-            Wrap Lines
-        </vaadin-button>`;
-    }
-
-    private onWrapToggle() {
-        this.dispatchEvent(new CustomEvent("toggle"));
     }
 }
