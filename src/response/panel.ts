@@ -51,6 +51,7 @@ export class ResponsePanel extends MobxLitElement {
                 <response-summary
                     .status=${this.state.status}
                     .statusText=${this.state.statusText}
+                    .contentLength=${this.state.body.byteLength}
                     .contentType=${contentType}
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
@@ -137,6 +138,9 @@ export class ResponseSummary extends LitElement {
     @property({ type: String, attribute: false })
     statusText = "";
 
+    @property({ type: Number, attribute: false })
+    contentLength = 0;
+
     @property({ type: String, attribute: false })
     contentType = "";
 
@@ -169,11 +173,20 @@ export class ResponseSummary extends LitElement {
                 </vaadin-horizontal-layout>
                 <span>|</span>
                 <vaadin-horizontal-layout theme="spacing-s">
-                    <span>Content-Type:</span>
-                    <span style=${styleMap({ color })}
-                        >${this.contentType}</span
-                    >
+                    <span>Size:</span>
+                    <span style=${styleMap({ color })}>
+                        ${this.contentLength.toLocaleString()} bytes
+                    </span>
                 </vaadin-horizontal-layout>
+                ${this.contentType
+                    ? html`<span>|</span>
+                          <vaadin-horizontal-layout theme="spacing-s">
+                              <span>Content-Type:</span>
+                              <span style=${styleMap({ color })}
+                                  >${this.contentType}</span
+                              >
+                          </vaadin-horizontal-layout>`
+                    : nothing}
             </vaadin-horizontal-layout>
         `;
     }
