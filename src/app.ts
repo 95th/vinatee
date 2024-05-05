@@ -4,9 +4,16 @@ import "./request/url-bar.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";
+import { readFile } from "@tauri-apps/plugin-fs";
+import { fetch } from "@tauri-apps/plugin-http";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { Properties, RequestState, requestContext } from "./request/state.js";
+import {
+    AuthorizationType,
+    RequestBodyType,
+    RequestState,
+    requestContext,
+} from "./request/state.js";
 
 @customElement("vin-app")
 export class VinateeApp extends MobxLitElement {
@@ -24,31 +31,109 @@ export class VinateeApp extends MobxLitElement {
         </vaadin-vertical-layout>`;
     }
 
-    private onSend() {
-        console.log("Send request");
-        console.log(this.requestState.method, this.requestState.url);
+    private async onSend() {
+        const url = new URL(this.requestState.url);
 
-        printProperties("Headers:", this.requestState.headers);
-        printProperties("Parameters:", this.requestState.params);
+        for (const p of this.requestState.params.entries) {
+            if (p.enabled && p.name !== "") {
+                url.searchParams.append(p.name, p.value);
+            }
+        }
 
-        console.log("Body:");
-        console.log("Type=", this.requestState.body.type);
-        console.log("Text=", this.requestState.body.text.toString());
-        console.log("JSON=", this.requestState.body.json.toString());
-        printProperties("URL Encoded form:", this.requestState.body.urlEncoded);
-        console.log("File=", this.requestState.body.file);
+        let hasContentTypeHeader = false;
+        let hasAuthHeader = false;
 
-        console.log("Authorization:");
-        console.log("Type=", this.requestState.authorization.type);
-        console.log("Token=", this.requestState.authorization.bearerToken);
-        console.log("Username=", this.requestState.authorization.basicUsername);
-        console.log("Password=", this.requestState.authorization.basicPassword);
-    }
-}
+        const headers: [string, string][] = [["User-Agent", "Vinatee/0.1"]];
+        for (const p of this.requestState.headers.entries) {
+            if (
+                p.enabled &&
+                p.name !== "" &&
+                p.name.toLowerCase() !== "user-agent"
+            ) {
+                headers.push([p.name, p.value]);
+                if (p.name.toLowerCase() === "content-type") {
+                    hasContentTypeHeader = true;
+                }
+                if (p.name.toLowerCase() === "authorization") {
+                    hasAuthHeader = true;
+                }
+            }
+        }
 
-function printProperties(title: string, properties: Properties) {
-    console.log(title);
-    for (const p of properties.entries) {
-        console.log(`${p.name} = ${p.value} (enabled=${p.enabled})`);
+        let body: BodyInit | undefined;
+
+        switch (this.requestState.body.type) {
+            case RequestBodyType.none:
+                break;
+            case RequestBodyType.text:
+                if (!hasContentTypeHeader) {
+                    headers.push(["Content-Type", "text/plain"]);
+                }
+                body = this.requestState.body.text.toString();
+                break;
+            case RequestBodyType.json:
+                if (!hasContentTypeHeader) {
+                    headers.push(["Content-Type", "application/json"]);
+                }
+                body = this.requestState.body.json.toString();
+                break;
+            case RequestBodyType.urlEncoded:
+                if (!hasContentTypeHeader) {
+                    headers.push([
+                        "Content-Type",
+                        "application/x-www-form-urlencoded",
+                    ]);
+                }
+                body = new URLSearchParams();
+                for (const p of this.requestState.body.urlEncoded.entries) {
+                    if (p.enabled && p.name !== "") {
+                        body.append(p.name, p.value);
+                    }
+                }
+                break;
+            case RequestBodyType.file:
+                if (this.requestState.body.file !== "") {
+                    if (!hasContentTypeHeader) {
+                        // TODO: Guess mimetype from file extension or magic number
+                        headers.push([
+                            "Content-Type",
+                            "application/octet-stream",
+                        ]);
+                    }
+                    body = await readFile(this.requestState.body.file);
+                }
+                break;
+        }
+
+        if (!hasAuthHeader) {
+            switch (this.requestState.authorization.type) {
+                case AuthorizationType.none:
+                    break;
+                case AuthorizationType.basic:
+                    const concatenated = `${this.requestState.authorization.basicUsername}:${this.requestState.authorization.basicPassword}`;
+                    headers.push([
+                        "Authorization",
+                        `Basic ${btoa(concatenated)}`,
+                    ]);
+                    break;
+                case AuthorizationType.bearer:
+                    headers.push([
+                        "Authorization",
+                        `Bearer ${this.requestState.authorization.bearerToken}`,
+                    ]);
+                    break;
+            }
+        }
+
+        const response = await fetch(url, {
+            method: this.requestState.method,
+            headers,
+            body,
+        });
+
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.headers);
+        console.log(await response.text());
     }
 }
