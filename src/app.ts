@@ -60,7 +60,7 @@ export class VinateeApp extends MobxLitElement {
                 auth = {
                     type: "basic",
                     username: authState.basicUsername,
-                    password: authState.basicUsername,
+                    password: authState.basicPassword,
                 };
                 break;
             case AuthorizationType.bearer:
