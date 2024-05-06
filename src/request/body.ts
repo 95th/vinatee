@@ -29,7 +29,7 @@ export class RequestBody extends MobxLitElement {
     private state!: RequestState;
 
     @state()
-    wrapLines = false;
+    wrapLines = true;
 
     override render() {
         return html`<vaadin-vertical-layout style="align-items: stretch">

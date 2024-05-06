@@ -28,10 +28,10 @@ export class ResponsePanel extends MobxLitElement {
     private tabs: string[] = [];
 
     @state()
-    wrapLines = false;
+    wrapLines = true;
 
     @state()
-    jsonPrettify = false;
+    jsonPrettify = true;
 
     private contentType() {
         return this.state.headers.get("Content-Type")?.split(";")[0];
@@ -76,7 +76,7 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vaadin-tabsheet>
+                <vaadin-tabsheet >
                     <vaadin-tabs
                         slot="tabs"
                         @selected-changed=${this.onTabChange}
