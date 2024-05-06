@@ -2,6 +2,7 @@ import "@vaadin/horizontal-layout";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
+import "../components/tabsheet.js";
 import "../components/toggle-button.js";
 import "./json-response.js";
 import "./response-headers.js";
@@ -28,10 +29,10 @@ export class ResponsePanel extends MobxLitElement {
     private tabs: string[] = [];
 
     @state()
-    wrapLines = false;
+    wrapLines = true;
 
     @state()
-    jsonPrettify = false;
+    jsonPrettify = true;
 
     private contentType() {
         return this.state.headers.get("Content-Type")?.split(";")[0];
@@ -64,10 +65,7 @@ export class ResponsePanel extends MobxLitElement {
         }
 
         return html`
-            <vaadin-vertical-layout
-                theme="padding"
-                style="align-items: stretch"
-            >
+            <vaadin-vertical-layout style="align-items: stretch">
                 <response-summary
                     .status=${this.state.status}
                     .statusText=${this.state.statusText}
@@ -76,56 +74,56 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vaadin-tabsheet>
+                <vin-tabsheet>
                     <vaadin-tabs
                         slot="tabs"
+                        class="tabs"
                         @selected-changed=${this.onTabChange}
                     >
                         ${this.renderTabs()}
                     </vaadin-tabs>
                     ${this.renderControls()} ${this.renderTabContents()}
-                </vaadin-tabsheet>
+                </vin-tabsheet>
             </vaadin-vertical-layout>
         `;
     }
 
     private renderTabs() {
         return repeat(this.tabs, (tab) => {
-            return html`<vaadin-tab id=${tab}>${tab}</vaadin-tab>`;
+            return html`<vaadin-tab>${tab}</vaadin-tab>`;
         });
     }
 
     private renderTabContents() {
-        return repeat(this.tabs, (tab) => {
-            if (tab === "JSON") {
-                return html`<json-response
-                    tab=${tab}
-                    .body=${this.state.body}
-                    .prettify=${this.jsonPrettify}
-                    .wrapLines=${this.wrapLines}
-                ></json-response>`;
-            } else if (tab === "Text") {
-                return html`<text-response
-                    tab=${tab}
-                    .body=${this.state.body}
-                    .wrapLines=${this.wrapLines}
-                ></text-response>`;
-            } else if (tab === "Headers") {
-                return html`<response-headers
-                    tab=${tab}
-                    .headers=${this.state.headers}
-                ></response-headers>`;
-            } else {
-                return nothing;
-            }
-        });
+        const tab = this.tabs[this.selectedTabIndex];
+        if (tab === "JSON") {
+            return html`<json-response
+                slot="tab-content"
+                .body=${this.state.body}
+                .prettify=${this.jsonPrettify}
+                .wrapLines=${this.wrapLines}
+            ></json-response>`;
+        } else if (tab === "Text") {
+            return html`<text-response
+                slot="tab-content"
+                .body=${this.state.body}
+                .wrapLines=${this.wrapLines}
+            ></text-response>`;
+        } else if (tab === "Headers") {
+            return html`<response-headers
+                slot="tab-content"
+                .headers=${this.state.headers}
+            ></response-headers>`;
+        } else {
+            return nothing;
+        }
     }
 
     private renderControls() {
         switch (this.tabs[this.selectedTabIndex]) {
             case "JSON":
                 return html`<vaadin-horizontal-layout
-                    slot="suffix"
+                    slot="controls"
                     theme="spacing"
                     style="justify-content: flex-end"
                 >
@@ -143,13 +141,16 @@ export class ResponsePanel extends MobxLitElement {
                 </vaadin-horizontal-layout>`;
             case "Text":
                 return html` <toggle-button
-                    slot="suffix"
+                    slot="controls"
                     .value=${this.wrapLines}
                     @toggle=${this.onWrapLinesToggle}
                     >Wrap lines</toggle-button
                 >`;
             default:
-                return html`<div slot="suffix" style="height: 2.75rem"></div>`;
+                return html`<div
+                    slot="controls"
+                    style="height: 2.75rem"
+                ></div>`;
         }
     }
 

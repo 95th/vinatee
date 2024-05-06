@@ -14,7 +14,7 @@ export class ResponseHeadersPanel extends LitElement {
             ([name, value]) => ({ name, value })
         );
         return html`
-            <vaadin-grid .items="${headers}" all-rows-visible>
+            <vaadin-grid theme="no-border" .items="${headers}" all-rows-visible>
                 <vaadin-grid-sort-column
                     header="Name"
                     path="name"

@@ -161,7 +161,7 @@ export class RequestState {
     method = "GET";
 
     @observable
-    url = "";
+    url = "https://google.com";
 
     headers = new Properties();
     params = new Properties();
