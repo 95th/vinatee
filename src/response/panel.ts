@@ -94,6 +94,7 @@ export class ResponsePanel extends MobxLitElement {
 
     private renderTabContents() {
         const tab = this.tabs[this.selectedTabIndex];
+        // force re-rendering of the tab content when the tab changes
         switch (tab) {
             case "JSON":
                 return html`<json-response

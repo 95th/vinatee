@@ -49,7 +49,7 @@ export class RequestPanel extends MobxLitElement {
     }
 
     private renderTabContents() {
-        // force render of all tabs
+        // force re-rendering of the tab content when the tab changes
         switch (this.selectedTabIndex) {
             case 0:
                 return html`<query-params
