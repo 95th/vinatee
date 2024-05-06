@@ -10,7 +10,7 @@ import "./url-bar.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
@@ -29,28 +29,43 @@ export class RequestPanel extends MobxLitElement {
                 style="align-items: stretch"
             >
                 <url-bar></url-bar>
-                <vaadin-tabsheet>
+                <vaadin-tabsheet @selected-changed=${this.onTabChange}>
                     <vaadin-tabs
                         slot="tabs"
                         @selected-changed=${this.onTabChange}
                     >
-                        <vaadin-tab id="query-params-tab"
-                            >Parameters</vaadin-tab
-                        >
+                        <vaadin-tab id="query-params-tab">
+                            Parameters
+                        </vaadin-tab>
                         <vaadin-tab id="body-tab">Body</vaadin-tab>
                         <vaadin-tab id="headers-tab">Headers</vaadin-tab>
                         <vaadin-tab id="auth-tab">Authorization</vaadin-tab>
                     </vaadin-tabs>
 
-                    ${this.renderControls()}
-
-                    <query-params tab="query-params-tab"></query-params>
-                    <request-body tab="body-tab"></request-body>
-                    <request-headers tab="headers-tab"></request-headers>
-                    <request-auth tab="auth-tab"></request-auth>
+                    ${this.renderControls()} ${this.renderTabContents()}
                 </vaadin-tabsheet>
             </vaadin-vertical-layout>
         `;
+    }
+
+    private renderTabContents() {
+        // force render of all tabs
+        switch (this.selectedTabIndex) {
+            case 0:
+                return html`<query-params
+                    tab="query-params-tab"
+                ></query-params>`;
+            case 1:
+                return html`<request-body tab="body-tab"></request-body>`;
+            case 2:
+                return html`<request-headers
+                    tab="headers-tab"
+                ></request-headers>`;
+            case 3:
+                return html`<request-auth tab="auth-tab"></request-auth>`;
+            default:
+                return nothing;
+        }
     }
 
     private renderControls() {

@@ -76,10 +76,12 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vaadin-tabs @selected-changed=${this.onTabChange}>
-                    ${this.renderTabs()} ${this.renderControls()}
-                </vaadin-tabs>
-                ${this.renderTabContents()}
+                <vaadin-tabsheet @selected-changed=${this.onTabChange}>
+                    <vaadin-tabs slot="tabs">
+                        ${this.renderTabs()}
+                    </vaadin-tabs>
+                    ${this.renderControls()} ${this.renderTabContents()}
+                </vaadin-tabsheet>
             </vaadin-vertical-layout>
         `;
     }
