@@ -76,7 +76,7 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vaadin-tabsheet >
+                <vaadin-tabsheet>
                     <vaadin-tabs
                         slot="tabs"
                         @selected-changed=${this.onTabChange}
