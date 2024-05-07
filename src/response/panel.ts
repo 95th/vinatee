@@ -20,8 +20,6 @@ import { ResponseState, responseContext } from "../request/state.js";
 
 @customElement("response-panel")
 export class ResponsePanel extends MobxLitElement {
-    static override styles = [typography];
-
     @consume({ context: responseContext })
     private state!: ResponseState;
 
@@ -64,18 +62,9 @@ export class ResponsePanel extends MobxLitElement {
 
     override render() {
         if (this.state.error !== "") {
-            return html`<vaadin-vertical-layout
-                theme="spacing"
-                style="align-items: center; justify-content: center; height: 100%; padding-bottom: 6rem;"
-            >
-                <vaadin-icon
-                    style="color: var(--lumo-disabled-text-color); font-size: 3rem;"
-                    icon="vaadin:close-circle-o"
-                ></vaadin-icon>
-                <p style="color: var(--lumo-tertiary-text-color)">
-                    Error: ${this.state.error}
-                </p>
-            </vaadin-vertical-layout>`;
+            return html`<error-response
+                error=${this.state.error}
+            ></error-response>`;
         }
 
         if (!this.state.status) {
@@ -253,5 +242,28 @@ export class ResponseSummary extends LitElement {
                     : nothing}
             </vaadin-horizontal-layout>
         `;
+    }
+}
+
+@customElement("error-response")
+export class ErrorResponse extends LitElement {
+    static override styles = [typography];
+
+    @property()
+    error = "";
+
+    override render() {
+        return html`<vaadin-vertical-layout
+            theme="spacing"
+            style="align-items: center; justify-content: center; height: 100%; padding-bottom: 6rem;"
+        >
+            <vaadin-icon
+                style="color: var(--lumo-disabled-text-color); font-size: 3rem;"
+                icon="vaadin:close-circle-o"
+            ></vaadin-icon>
+            <p style="color: var(--lumo-tertiary-text-color)">
+                Error: ${this.error}
+            </p>
+        </vaadin-vertical-layout>`;
     }
 }
