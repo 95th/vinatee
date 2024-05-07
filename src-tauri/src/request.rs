@@ -1,4 +1,4 @@
-use std::{sync::Arc, time::Duration};
+use std::{error::Error, sync::Arc, time::Duration};
 
 use reqwest::{header::CONTENT_TYPE, Method};
 use serde::{Deserialize, Serialize};
@@ -76,19 +76,10 @@ struct Property {
 }
 
 #[derive(Serialize)]
-pub enum Error {
-    File(String),
-    Form(String),
-    Request(String),
-    InvalidResponseHeader,
-    ResponseBodyRead(String),
-}
-
-#[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     status: u16,
-    status_text: String,
+    status_text: &'static str,
     headers: Vec<(String, String)>,
     rid: ResourceId,
 }
@@ -102,7 +93,7 @@ pub async fn fetch<R>(
     request: Request,
     options: ClientOptions,
     webview: Webview<R>,
-) -> Result<Response, Error>
+) -> Result<Response, String>
 where
     R: Runtime,
 {
@@ -162,9 +153,7 @@ where
             }
         }
         RequestBody::File { path } => {
-            let file = File::open(path)
-                .await
-                .map_err(|e| Error::File(e.to_string()))?;
+            let file = File::open(path).await.map_err(|e| error_string(&e))?;
             request_builder = request_builder.body(file);
             if !has_content_type_header {
                 // TODO: Guess mimetype based on extension or magic number
@@ -180,7 +169,7 @@ where
                 .filter(|p| p.enabled && !p.name.is_empty())
                 .map(|p| (p.name, p.value))
                 .collect();
-            let form = serde_urlencoded::to_string(form).map_err(|e| Error::Form(e.to_string()))?;
+            let form = serde_urlencoded::to_string(form).map_err(|e| error_string(&e))?;
             request_builder = request_builder.body(form);
             if !has_content_type_header {
                 request_builder = request_builder.header(
@@ -191,10 +180,7 @@ where
         }
     }
 
-    let response = request_builder
-        .send()
-        .await
-        .map_err(|e| Error::Request(e.to_string()))?;
+    let response = request_builder.send().await.map_err(|e| error_string(&e))?;
     let status = response.status();
 
     let mut headers = Vec::new();
@@ -202,9 +188,7 @@ where
     for (k, v) in response.headers().iter() {
         headers.push((
             k.to_string(),
-            v.to_str()
-                .map_err(|_| Error::InvalidResponseHeader)?
-                .to_owned(),
+            v.to_str().map_err(|e| error_string(&e))?.to_owned(),
         ));
     }
 
@@ -213,7 +197,7 @@ where
 
     Ok(Response {
         status: status.as_u16(),
-        status_text: status.canonical_reason().unwrap_or_default().to_string(),
+        status_text: status.canonical_reason().unwrap_or("Unknown"),
         headers,
         rid,
     })
@@ -223,7 +207,7 @@ where
 pub async fn fetch_read_body<R>(
     webview: Webview<R>,
     rid: ResourceId,
-) -> Result<tauri::ipc::Response, Error>
+) -> Result<tauri::ipc::Response, String>
 where
     R: Runtime,
 {
@@ -231,12 +215,16 @@ where
         let mut resources = webview.resources_table();
         resources
             .take::<ResponseResource>(rid)
-            .map_err(|_| Error::ResponseBodyRead("Cannot read response".to_string()))?
+            .map_err(|_| "Cannot read response".to_string())?
     };
     let response = Arc::into_inner(response).unwrap().0;
-    let body = response
-        .bytes()
-        .await
-        .map_err(|e| Error::ResponseBodyRead(e.to_string()))?;
+    let body = response.bytes().await.map_err(|e| error_string(&e))?;
     Ok(tauri::ipc::Response::new(Vec::from(body)))
+}
+
+fn error_string(mut e: &dyn Error) -> String {
+    while let Some(source) = e.source() {
+        e = source;
+    }
+    e.to_string()
 }

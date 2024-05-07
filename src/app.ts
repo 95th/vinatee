@@ -113,7 +113,13 @@ export class VinateeApp extends MobxLitElement {
                 totalTime
             );
         } catch (err) {
-            this.responseState.setError(JSON.stringify(err));
+            if (err instanceof Error) {
+                this.responseState.setError(err.message);
+            } else if (typeof err === "string") {
+                this.responseState.setError(err);
+            } else {
+                this.responseState.setError("Unknown error occurred.");
+            }
         }
     }
 }

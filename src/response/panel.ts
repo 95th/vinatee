@@ -1,4 +1,5 @@
 import "@vaadin/horizontal-layout";
+import "@vaadin/notification";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
@@ -10,6 +11,10 @@ import "./text-response.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
+import {
+    NotificationLitRenderer,
+    notificationRenderer,
+} from "@vaadin/notification/lit.js";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
@@ -59,9 +64,23 @@ export class ResponsePanel extends MobxLitElement {
         }
     }
 
+    private errorRenderer: NotificationLitRenderer = () =>
+        html`<vaadin-horizontal-layout
+            theme="spacing"
+            style="align-items: center;"
+        >
+            <div>${this.state.error}</div>
+        </vaadin-horizontal-layout>`;
+
     override render() {
         if (!this.state.status) {
-            return nothing;
+            return html`<vaadin-notification
+                theme="error"
+                duration="5000"
+                position="bottom-center"
+                .opened=${this.state.error !== ""}
+                ${notificationRenderer(this.errorRenderer, [])}
+            ></vaadin-notification>`;
         }
 
         return html`
