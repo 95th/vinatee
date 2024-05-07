@@ -1,5 +1,4 @@
 import "@vaadin/horizontal-layout";
-import "@vaadin/notification";
 import "@vaadin/tabs";
 import "@vaadin/tabsheet";
 import "@vaadin/vertical-layout";
@@ -11,11 +10,8 @@ import "./text-response.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
-import {
-    NotificationLitRenderer,
-    notificationRenderer,
-} from "@vaadin/notification/lit.js";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
+import { typography } from "@vaadin/vaadin-lumo-styles/typography.js";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
@@ -64,23 +60,15 @@ export class ResponsePanel extends MobxLitElement {
         }
     }
 
-    private errorRenderer: NotificationLitRenderer = () =>
-        html`<vaadin-horizontal-layout
-            theme="spacing"
-            style="align-items: center;"
-        >
-            <div>${this.state.error}</div>
-        </vaadin-horizontal-layout>`;
-
     override render() {
+        if (this.state.error !== "") {
+            return html`<error-response
+                error=${this.state.error}
+            ></error-response>`;
+        }
+
         if (!this.state.status) {
-            return html`<vaadin-notification
-                theme="error"
-                duration="5000"
-                position="bottom-center"
-                .opened=${this.state.error !== ""}
-                ${notificationRenderer(this.errorRenderer, [])}
-            ></vaadin-notification>`;
+            return nothing;
         }
 
         return html`
@@ -254,5 +242,28 @@ export class ResponseSummary extends LitElement {
                     : nothing}
             </vaadin-horizontal-layout>
         `;
+    }
+}
+
+@customElement("error-response")
+export class ErrorResponse extends LitElement {
+    static override styles = [typography];
+
+    @property()
+    error = "";
+
+    override render() {
+        return html`<vaadin-vertical-layout
+            theme="spacing"
+            style="align-items: center; justify-content: center; height: 100%; padding-bottom: 6rem;"
+        >
+            <vaadin-icon
+                style="color: var(--lumo-disabled-text-color); font-size: 3rem;"
+                icon="vaadin:close-circle-o"
+            ></vaadin-icon>
+            <p style="color: var(--lumo-tertiary-text-color)">
+                Error: ${this.error}
+            </p>
+        </vaadin-vertical-layout>`;
     }
 }

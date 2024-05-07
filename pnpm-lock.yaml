@@ -56,9 +56,6 @@ dependencies:
   '@vaadin/icons':
     specifier: 24.3.12
     version: 24.3.12
-  '@vaadin/notification':
-    specifier: 24.3.12
-    version: 24.3.12
   '@vaadin/select':
     specifier: 24.3.12
     version: 24.3.12
@@ -79,6 +76,9 @@ dependencies:
     version: 24.3.12
   '@vaadin/tooltip':
     specifier: 24.3.12
+    version: 24.3.12
+  '@vaadin/vaadin-lumo-styles':
+    specifier: ^24.3.12
     version: 24.3.12
   '@vaadin/vertical-layout':
     specifier: 24.3.12
@@ -857,18 +857,6 @@ packages:
   /@vaadin/lit-renderer@24.3.12:
     resolution: {integrity: sha512-VY1FYcj1MjBbVs4+0nQfpqERGGles21pWliiYtkoev44xYZ8Fbc+ycn8aqZCnwT8J2bnz/w7g8mecaTZFgDsqg==}
     dependencies:
-      lit: 3.1.3
-    dev: false
-
-  /@vaadin/notification@24.3.12:
-    resolution: {integrity: sha512-LcCLTmLqm8zHee6BlTGKm/aumQ/dvS7WOtK6BzIH+OnEqhMbKME4zsE4MfSy0v9Q0TjMKkv9trpkmEacgarijg==}
-    dependencies:
-      '@polymer/polymer': 3.5.1
-      '@vaadin/component-base': 24.3.12
-      '@vaadin/lit-renderer': 24.3.12
-      '@vaadin/vaadin-lumo-styles': 24.3.12
-      '@vaadin/vaadin-material-styles': 24.3.12
-      '@vaadin/vaadin-themable-mixin': 24.3.12
       lit: 3.1.3
     dev: false
 
