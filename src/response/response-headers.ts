@@ -1,5 +1,4 @@
-import "@vaadin/grid";
-import "@vaadin/grid/vaadin-grid-sort-column.js";
+
 
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";

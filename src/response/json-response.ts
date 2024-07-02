@@ -1,4 +1,4 @@
-import "../components/editor.js";
+
 
 import { Text } from "@codemirror/state";
 import { LitElement, html } from "lit";

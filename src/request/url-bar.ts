@@ -1,8 +1,3 @@
-import "@vaadin/button";
-import "@vaadin/horizontal-layout";
-import "@vaadin/select";
-import "@vaadin/text-field";
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
@@ -51,7 +46,11 @@ export class UrlBar extends MobxLitElement {
                     value=${this.state.url}
                     @value-changed=${this.onUrlChange}
                 ></vaadin-text-field>
-                <vaadin-button theme="primary" @click=${this.onSend}>
+                <vaadin-button
+                    theme="primary"
+                    style="cursor: pointer"
+                    @click=${this.onSend}
+                >
                     Send
                 </vaadin-button>
             </vaadin-horizontal-layout>

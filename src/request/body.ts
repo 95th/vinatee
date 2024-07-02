@@ -1,20 +1,10 @@
-import "@vaadin/button";
-import "@vaadin/horizontal-layout";
-import "@vaadin/icon";
-import "@vaadin/icons";
-import "@vaadin/select";
-import "@vaadin/vertical-layout";
-import "../components/toggle-button.js";
-import "./file.js";
-import "./json-editor.js";
-import "./text-editor.js";
-import "./url-encoded-form.js";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
@@ -25,6 +15,12 @@ const bodyTypes = Object.values(RequestBodyType).map((type) => ({
 
 @customElement("request-body")
 export class RequestBody extends MobxLitElement {
+    static override styles = css`
+        vaadin-button {
+            cursor: pointer;
+        }
+    `;
+
     @consume({ context: requestContext })
     private state!: RequestState;
 

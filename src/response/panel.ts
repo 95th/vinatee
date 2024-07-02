@@ -1,13 +1,3 @@
-import "@vaadin/horizontal-layout";
-import "@vaadin/tabs";
-import "@vaadin/tabsheet";
-import "@vaadin/vertical-layout";
-import "../components/tabsheet.js";
-import "../components/toggle-button.js";
-import "./json-response.js";
-import "./response-headers.js";
-import "./text-response.js";
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
@@ -20,6 +10,12 @@ import { ResponseState, responseContext } from "../request/state.js";
 
 @customElement("response-panel")
 export class ResponsePanel extends MobxLitElement {
+    static override styles = css`
+        vaadin-tab {
+            cursor: pointer;
+        }
+    `;
+
     @consume({ context: responseContext })
     private state!: ResponseState;
 

@@ -1,4 +1,4 @@
-import "../components/properties-panel.js";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";

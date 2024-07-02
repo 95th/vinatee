@@ -1,6 +1,4 @@
-import "@vaadin/split-layout";
-import "./request/panel.js";
-import "./response/panel.js";
+import "./imports.js";
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { provide } from "@lit/context";

@@ -1,21 +1,20 @@
-import "@vaadin/tabs";
-import "@vaadin/tabsheet";
-import "@vaadin/vertical-layout";
-import "./authorization.js";
-import "./body.js";
-import "./headers.js";
-import "./query-params.js";
-import "./url-bar.js";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
-import { html } from "lit";
+import { css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { RequestState, requestContext } from "./state.js";
 
 @customElement("request-panel")
 export class RequestPanel extends MobxLitElement {
+    static override styles = css`
+        vaadin-tab {
+            cursor: pointer;
+        }
+    `;
+
     @consume({ context: requestContext })
     private state!: RequestState;
 

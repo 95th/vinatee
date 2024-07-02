@@ -1,9 +1,3 @@
-import "@vaadin/button";
-import "@vaadin/custom-field";
-import "@vaadin/horizontal-layout";
-import "@vaadin/icon";
-import "@vaadin/icons";
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { open } from "@tauri-apps/plugin-dialog";

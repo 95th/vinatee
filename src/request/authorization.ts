@@ -1,8 +1,4 @@
-import "@vaadin/horizontal-layout";
-import "@vaadin/select";
-import "@vaadin/vertical-layout";
-import "./basic-auth.js";
-import "./bearer-auth.js";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";

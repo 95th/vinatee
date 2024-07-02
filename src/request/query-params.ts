@@ -1,5 +1,3 @@
-import "../components/properties-panel.js";
-
 import { consume } from "@lit/context";
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";

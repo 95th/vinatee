@@ -1,4 +1,4 @@
-import "@vaadin/text-area";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";

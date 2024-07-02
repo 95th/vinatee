@@ -1,15 +1,7 @@
-import "@vaadin/button";
-import "@vaadin/checkbox";
-import "@vaadin/horizontal-layout";
-import "@vaadin/icon";
-import "@vaadin/icons";
-import "@vaadin/text-field";
-import "@vaadin/tooltip";
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { CheckboxCheckedChangedEvent } from "@vaadin/checkbox";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
-import { PropertyValueMap, html } from "lit";
+import { PropertyValueMap, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Properties, Property } from "../request/state.js";
 
@@ -53,6 +45,12 @@ export class PropertiesPanel extends MobxLitElement {
 
 @customElement("properties-controls")
 export class PropertiesControls extends MobxLitElement {
+    static override styles = css`
+        vaadin-button {
+            cursor: pointer;
+        }
+    `;
+
     @property({ attribute: false })
     properties!: Properties;
 
@@ -98,7 +96,7 @@ export class PropertyRow extends MobxLitElement {
         return html`
             <vaadin-horizontal-layout theme="spacing-s">
                 <vaadin-checkbox
-                    style="align-self: center;"
+                    style="align-self: center; cursor: pointer;"
                     tabindex="-1"
                     .checked=${this.property.enabled}
                     @checked-changed=${this.onEnabledChange}
@@ -127,6 +125,7 @@ export class PropertyRow extends MobxLitElement {
                 <vaadin-button
                     tabindex="-1"
                     theme="tertiary icon"
+                    style="cursor: pointer;"
                     @click=${this.onDelete}
                 >
                     <vaadin-tooltip

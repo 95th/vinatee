@@ -1,12 +1,16 @@
-import "@vaadin/button";
-import "@vaadin/icon";
-import "@vaadin/icons";
 
-import { LitElement, html } from "lit";
+
+import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 @customElement("toggle-button")
 export class ToggleButton extends LitElement {
+    static override styles = css`
+        vaadin-button {
+            cursor: pointer;
+        }
+    `;
+
     @property()
     value = false;
 

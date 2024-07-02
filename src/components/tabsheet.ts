@@ -1,5 +1,4 @@
-import "@vaadin/tabs";
-import "@vaadin/horizontal-layout";
+
 
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";

@@ -1,4 +1,4 @@
-import "../components/editor.js";
+
 
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
