@@ -1,5 +1,3 @@
-
-
 import { Text } from "@codemirror/state";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
@@ -19,12 +17,12 @@ export class JsonResponse extends LitElement {
         const text = new TextDecoder().decode(this.body);
         const pretty = this.prettify ? this.convertToPrettyJson(text) : text;
         const json = Text.of(pretty.split("\n"));
-        return html`<vin-editor
+        return html`<code-editor
             .value=${json}
             .wrapLines=${this.wrapLines}
             language="json"
-            readonly="true"
-        ></vin-editor>`;
+            readonly
+        ></code-editor>`;
     }
 
     private convertToPrettyJson(text: string) {

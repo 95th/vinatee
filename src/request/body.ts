@@ -1,5 +1,3 @@
-
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { Text } from "@codemirror/state";
 import { consume } from "@lit/context";
@@ -94,13 +92,22 @@ export class RequestBody extends MobxLitElement {
             case RequestBodyType.urlEncoded:
                 return html`<url-encoded-form></url-encoded-form>`;
             case RequestBodyType.json:
-                return html`<json-editor
-                    .wrapLines=${this.wrapLines}
-                ></json-editor>`;
+                return html`
+                    <code-editor
+                        .value=${this.state.body.json}
+                        .wrapLines=${this.wrapLines}
+                        language="json"
+                        @change=${this.onJsonChange}
+                    ></code-editor>
+                `;
             case RequestBodyType.text:
-                return html`<text-editor
-                    .wrapLines=${this.wrapLines}
-                ></text-editor>`;
+                return html`
+                    <code-editor
+                        .value=${this.state.body.text}
+                        .wrapLines=${this.wrapLines}
+                        @change=${this.onTextChange}
+                    ></code-editor>
+                `;
             case RequestBodyType.file:
                 return html`<file-body></file-body>`;
             default:
@@ -137,5 +144,13 @@ export class RequestBody extends MobxLitElement {
 
     private onWrapLinesToggle() {
         this.wrapLines = !this.wrapLines;
+    }
+
+    private onJsonChange(event: CustomEvent<Text>) {
+        this.state.body.setJson(event.detail);
+    }
+
+    private onTextChange(event: CustomEvent<Text>) {
+        this.state.body.setText(event.detail);
     }
 }

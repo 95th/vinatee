@@ -7,8 +7,8 @@ import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
 
-@customElement("vin-editor")
-export class VinEditor extends LitElement {
+@customElement("code-editor")
+export class CodeEditor extends LitElement {
     static override styles = css`
         .cm-editor,
         .cm-editor.cm-focused {

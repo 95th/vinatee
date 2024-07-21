@@ -1,5 +1,3 @@
-
-
 import { Text } from "@codemirror/state";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
@@ -15,10 +13,10 @@ export class TextResponse extends LitElement {
     override render() {
         const text = new TextDecoder().decode(this.body);
         const json = Text.of(text.split("\n"));
-        return html`<vin-editor
+        return html`<code-editor
             .value=${json}
             .wrapLines=${this.wrapLines}
-            readonly="true"
-        ></vin-editor>`;
+            readonly
+        ></code-editor>`;
     }
 }
