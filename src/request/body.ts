@@ -4,6 +4,7 @@ import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { EditorTextChangedEvent } from "../components/events/EditorTextChangedEvent.js";
 import { RequestBodyType, RequestState, requestContext } from "./state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
@@ -146,11 +147,11 @@ export class RequestBody extends MobxLitElement {
         this.wrapLines = !this.wrapLines;
     }
 
-    private onJsonChange(event: CustomEvent<Text>) {
+    private onJsonChange(event: EditorTextChangedEvent) {
         this.state.body.setJson(event.detail);
     }
 
-    private onTextChange(event: CustomEvent<Text>) {
+    private onTextChange(event: EditorTextChangedEvent) {
         this.state.body.setText(event.detail);
     }
 }

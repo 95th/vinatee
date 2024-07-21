@@ -6,6 +6,7 @@ import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
+import { EditorTextChangedEvent } from "./events/EditorTextChangedEvent.js";
 
 @customElement("code-editor")
 export class CodeEditor extends LitElement {
@@ -116,11 +117,5 @@ export class CodeEditor extends LitElement {
     override disconnectedCallback(): void {
         this.editorView?.destroy();
         super.disconnectedCallback();
-    }
-}
-
-export class EditorTextChangedEvent extends CustomEvent<Text> {
-    constructor(text: Text) {
-        super("change", { detail: text });
     }
 }
