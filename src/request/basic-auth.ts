@@ -1,5 +1,3 @@
-
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
@@ -13,7 +11,10 @@ export class BasicAuth extends MobxLitElement {
     private state!: RequestState;
 
     override render() {
-        return html`<vaadin-vertical-layout style="align-items: stretch">
+        return html`<vaadin-horizontal-layout
+            theme="spacing"
+            style="align-items: stretch"
+        >
             <vaadin-text-field
                 label="Username"
                 autocomplete="off"
@@ -34,7 +35,7 @@ export class BasicAuth extends MobxLitElement {
                 @value-changed=${this.onPasswordChange}
             >
             </vaadin-text-field>
-        </vaadin-vertical-layout>`;
+        </vaadin-horizontal-layout>`;
     }
 
     private onUsernameChange(event: TextFieldValueChangedEvent) {
