@@ -19,7 +19,7 @@ import "./components/code-editor.js";
 import "./components/properties-controls.js";
 import "./components/properties-panel.js";
 import "./components/property-row.js";
-import "./components/tabsheet.js";
+import "./components/tab-view.js";
 import "./components/toggle-button.js";
 import "./request/authorization.js";
 import "./request/basic-auth.js";

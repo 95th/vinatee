@@ -75,7 +75,7 @@ export class ResponsePanel extends MobxLitElement {
                     .headTime=${this.state.headTime}
                     .totalTime=${this.state.totalTime}
                 ></response-summary>
-                <vin-tabsheet>
+                <tab-view>
                     <vaadin-tabs
                         slot="tabs"
                         class="tabs"
@@ -84,7 +84,7 @@ export class ResponsePanel extends MobxLitElement {
                         ${this.renderTabs()}
                     </vaadin-tabs>
                     ${this.renderControls()} ${this.renderTabContents()}
-                </vin-tabsheet>
+                </tab-view>
             </vaadin-vertical-layout>
         `;
     }

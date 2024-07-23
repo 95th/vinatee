@@ -1,10 +1,8 @@
-
-
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 
-@customElement("vin-tabsheet")
-export class VinTabsheet extends LitElement {
+@customElement("tab-view")
+export class TabView extends LitElement {
     static override styles = css`
         .tabsheet {
             box-shadow: inset 0 -1px 0 0 var(--lumo-contrast-10pct);
