@@ -3,7 +3,7 @@ import { consume } from "@lit/context";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
-import { RequestState, requestContext } from "./state.js";
+import { RequestState, requestContext } from "./request-state.js";
 
 @customElement("basic-auth")
 export class BasicAuth extends MobxLitElement {

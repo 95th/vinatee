@@ -3,7 +3,7 @@ import { consume } from "@lit/context";
 import { open } from "@tauri-apps/plugin-dialog";
 import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { RequestState, requestContext } from "./state.js";
+import { RequestState, requestContext } from "./request-state.js";
 
 @customElement("file-body")
 export class FileBody extends MobxLitElement {

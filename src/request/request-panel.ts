@@ -1,11 +1,9 @@
-
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
 import { css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { RequestState, requestContext } from "./state.js";
+import { RequestState, requestContext } from "./request-state.js";
 
 @customElement("request-panel")
 export class RequestPanel extends MobxLitElement {

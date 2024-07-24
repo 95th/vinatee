@@ -1,9 +1,9 @@
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { Properties } from "../request/state.js";
 import { PropertiesTabEvent } from "./events/PropertiesTabEvent.js";
 import { PropertyDeleteEvent } from "./events/PropertyDeleteEvent.js";
+import { Properties } from "./property-state.js";
 
 @customElement("properties-panel")
 export class PropertiesPanel extends MobxLitElement {

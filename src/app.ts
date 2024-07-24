@@ -9,10 +9,9 @@ import {
     AuthorizationType,
     RequestBodyType,
     RequestState,
-    ResponseState,
     requestContext,
-    responseContext,
-} from "./request/state.js";
+} from "./request/request-state.js";
+import { ResponseState, responseContext } from "./response/response-state.js";
 
 @customElement("vin-app")
 export class VinateeApp extends MobxLitElement {

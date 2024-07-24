@@ -1,7 +1,7 @@
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { Properties } from "../request/state.js";
+import { Properties } from "./property-state.js";
 
 @customElement("properties-controls")
 export class PropertiesControls extends MobxLitElement {

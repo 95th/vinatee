@@ -3,9 +3,9 @@ import { CheckboxCheckedChangedEvent } from "@vaadin/checkbox";
 import { TextFieldValueChangedEvent } from "@vaadin/text-field";
 import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { Property } from "../request/state.js";
 import { PropertiesTabEvent } from "./events/PropertiesTabEvent.js";
 import { PropertyDeleteEvent } from "./events/PropertyDeleteEvent.js";
+import { Property } from "./property-state.js";
 
 @customElement("property-row")
 export class PropertyRow extends MobxLitElement {

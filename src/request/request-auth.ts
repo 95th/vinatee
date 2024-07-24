@@ -1,11 +1,13 @@
-
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
 import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { AuthorizationType, RequestState, requestContext } from "./state.js";
+import {
+    AuthorizationType,
+    RequestState,
+    requestContext,
+} from "./request-state.js";
 
 const authTypes = Object.values(AuthorizationType).map((type) => ({
     label: type,

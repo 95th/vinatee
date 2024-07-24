@@ -5,7 +5,11 @@ import { SelectValueChangedEvent } from "@vaadin/select";
 import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { EditorTextChangedEvent } from "../components/events/EditorTextChangedEvent.js";
-import { RequestBodyType, RequestState, requestContext } from "./state.js";
+import {
+    RequestBodyType,
+    RequestState,
+    requestContext,
+} from "./request-state.js";
 
 const bodyTypes = Object.values(RequestBodyType).map((type) => ({
     label: type,

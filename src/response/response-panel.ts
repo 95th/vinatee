@@ -4,7 +4,7 @@ import { TabSheetSelectedChangedEvent } from "@vaadin/tabsheet";
 import { PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
-import { ResponseState, responseContext } from "../request/state.js";
+import { ResponseState, responseContext } from "./response-state.js";
 
 @customElement("response-panel")
 export class ResponsePanel extends MobxLitElement {
