@@ -1,5 +1,3 @@
-
-
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { TextAreaValueChangedEvent } from "@vaadin/text-area";
@@ -22,12 +20,12 @@ export class BearerAuth extends MobxLitElement {
                 autocapitalize="off"
                 spellcheck="false"
                 .value=${this.state.authorization.bearerToken}
-                @value-changed=${this.onAuthTypeChange}
+                @value-changed=${this.onTokenChange}
             ></vaadin-text-area>
         `;
     }
 
-    private onAuthTypeChange(event: TextAreaValueChangedEvent) {
+    private onTokenChange(event: TextAreaValueChangedEvent) {
         this.state.authorization.setBearerToken(event.detail.value);
     }
 }
