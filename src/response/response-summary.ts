@@ -1,17 +1,20 @@
+import { badge } from "@vaadin/vaadin-lumo-styles/badge.js";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("response-summary")
 export class ResponseSummary extends LitElement {
-    static override styles = css`
-        :host {
-            font-family: var(--lumo-font-family);
-            font-size: var(--lumo-font-size-s);
-            line-height: var(--lumo-line-height-s);
-            color: var(--lumo-body-text-color);
-        }
-    `;
+    static override styles = [
+        css`
+            :host {
+                font-family: var(--lumo-font-family);
+                font-size: var(--lumo-font-size-s);
+                line-height: var(--lumo-line-height-s);
+                color: var(--lumo-body-text-color);
+            }
+        `,
+        badge,
+    ];
 
     @property({ type: Number, attribute: false })
     status = 0;
@@ -33,40 +36,25 @@ export class ResponseSummary extends LitElement {
 
     override render() {
         const isOk = this.status >= 200 && this.status < 300;
-        const color = isOk
-            ? "var(--lumo-success-text-color)"
-            : "var(--lumo-error-text-color)";
+        const theme = isOk ? "success" : "error";
         return html`
-            <vaadin-horizontal-layout theme="spacing-l padding">
-                <vaadin-horizontal-layout theme="spacing-s">
-                    <span>Status:</span>
-                    <span style=${styleMap({ color })}
-                        >${this.status} - ${this.statusText}
-                    </span>
-                </vaadin-horizontal-layout>
-                <span>|</span>
-                <vaadin-horizontal-layout theme="spacing-s">
-                    <span>Time:</span>
-                    <span style=${styleMap({ color })}>
-                        ${Math.round(this.totalTime)} ms (Head:
-                        ${Math.round(this.headTime)} ms)
-                    </span>
-                </vaadin-horizontal-layout>
-                <span>|</span>
-                <vaadin-horizontal-layout theme="spacing-s">
-                    <span>Size:</span>
-                    <span style=${styleMap({ color })}>
-                        ${this.contentLength.toLocaleString()} bytes
-                    </span>
-                </vaadin-horizontal-layout>
+            <vaadin-horizontal-layout theme="spacing padding">
+                <span theme="badge ${theme}">
+                    Status: ${this.status} - ${this.statusText}
+                </span>
+                <span theme="badge">
+                    Time: ${Math.round(this.totalTime)} ms (Head:
+                    ${Math.round(this.headTime)} ms)
+                </span>
+                <span theme="badge">
+                    Size: ${this.contentLength.toLocaleString()} bytes
+                </span>
                 ${this.contentType
-                    ? html`<span>|</span>
-                          <vaadin-horizontal-layout theme="spacing-s">
-                              <span>Content-Type:</span>
-                              <span style=${styleMap({ color })}
-                                  >${this.contentType}</span
-                              >
-                          </vaadin-horizontal-layout>`
+                    ? html`
+                          <span theme="badge">
+                              Content-Type:${this.contentType}
+                          </span>
+                      `
                     : nothing}
             </vaadin-horizontal-layout>
         `;
