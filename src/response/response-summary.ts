@@ -52,7 +52,7 @@ export class ResponseSummary extends LitElement {
                 ${this.contentType
                     ? html`
                           <span theme="badge">
-                              Content-Type:${this.contentType}
+                              Content-Type: ${this.contentType}
                           </span>
                       `
                     : nothing}
