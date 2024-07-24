@@ -1,6 +1,7 @@
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 import { PropertiesTabEvent } from "./events/PropertiesTabEvent.js";
 import { PropertyDeleteEvent } from "./events/PropertyDeleteEvent.js";
 import { Properties } from "./property-state.js";
@@ -19,7 +20,8 @@ export class PropertiesPanel extends MobxLitElement {
     }
 
     override render() {
-        return this.properties.entries.map(
+        return repeat(
+            this.properties.entries,
             (property, index) => html`
                 <property-row
                     .property=${property}
