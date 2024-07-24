@@ -43,11 +43,11 @@ export class ResponseSummary extends LitElement {
                     Status: ${this.status} - ${this.statusText}
                 </span>
                 <span theme="badge">
-                    Time: ${Math.round(this.totalTime)} ms (Head:
-                    ${Math.round(this.headTime)} ms)
+                    Time: ${this.formatMs(this.totalTime)} (Head:
+                    ${this.formatMs(this.headTime)})
                 </span>
                 <span theme="badge">
-                    Size: ${this.contentLength.toLocaleString()} bytes
+                    Size: ${this.formatBytes(this.contentLength)}
                 </span>
                 ${this.contentType
                     ? html`
@@ -58,5 +58,24 @@ export class ResponseSummary extends LitElement {
                     : nothing}
             </vaadin-horizontal-layout>
         `;
+    }
+
+    private formatBytes(bytes: number): string {
+        const sizes = ["B", "kB", "MB", "GB", "TB"];
+        if (bytes === 0) {
+            return "0 B";
+        }
+        const i = Math.floor(Math.log(bytes) / Math.log(1000));
+        const formattedValue = (bytes / Math.pow(1000, i)).toFixed(2);
+        return `${formattedValue} ${sizes[i]}`;
+    }
+
+    private formatMs(ms: number): string {
+        if (ms < 1000) {
+            return `${Math.round(ms)} ms`;
+        }
+
+        const seconds = ms / 1000;
+        return `${seconds.toFixed(2)} s`;
     }
 }
