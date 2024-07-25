@@ -1,12 +1,23 @@
 import { indentWithTab } from "@codemirror/commands";
 import { json } from "@codemirror/lang-json";
-import { codeFolding, foldGutter } from "@codemirror/language";
+import { codeFolding, foldGutter, syntaxTree } from "@codemirror/language";
 import { Compartment, EditorState, Text } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import {
+    Decoration,
+    DecorationSet,
+    EditorView,
+    keymap,
+    lineNumbers,
+    MatchDecorator,
+    ViewPlugin,
+    ViewUpdate,
+} from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { LitElement, PropertyValueMap, css, html } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
 import { EditorTextChangedEvent } from "./events/EditorTextChangedEvent.js";
+
+const REGEX_VARIABLE = /(\{[a-zA-Z_][a-zA-Z0-9-_]*\})/g;
 
 @customElement("code-editor")
 export class CodeEditor extends LitElement {
@@ -19,6 +30,10 @@ export class CodeEditor extends LitElement {
         .cm-content,
         .cm-scroller {
             font-family: Consolas, "SF Mono", "Fira Code", monospace;
+        }
+
+        .cm-editor-variable {
+            color: #f92672;
         }
 
         div.cm-content.cm-lineWrapping {
@@ -50,6 +65,39 @@ export class CodeEditor extends LitElement {
     }
 
     private initEditor(parent: HTMLElement) {
+        const matchDecorator = new MatchDecorator({
+            regexp: REGEX_VARIABLE,
+            decoration: Decoration.mark({
+                class: "cm-editor-variable",
+            }),
+        });
+
+        const highlightVariablePlugin = ViewPlugin.fromClass(
+            class {
+                decorations: DecorationSet;
+
+                constructor(view: EditorView) {
+                    this.decorations = matchDecorator.createDeco(view);
+                }
+
+                update(update: ViewUpdate) {
+                    if (
+                        update.docChanged ||
+                        update.viewportChanged ||
+                        syntaxTree(update.startState) !==
+                            syntaxTree(update.state)
+                    ) {
+                        this.decorations = matchDecorator.createDeco(
+                            update.view
+                        );
+                    }
+                }
+            },
+            {
+                decorations: (v) => v.decorations,
+            }
+        );
+
         const extensions = [
             minimalSetup,
             lineNumbers(),
@@ -67,6 +115,7 @@ export class CodeEditor extends LitElement {
                 }
             }),
             keymap.of([indentWithTab]),
+            highlightVariablePlugin,
         ];
         if (this.language === "json") {
             extensions.push(json());
