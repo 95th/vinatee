@@ -9,6 +9,7 @@ import {
     keymap,
     lineNumbers,
     MatchDecorator,
+    placeholder,
     ViewPlugin,
     ViewUpdate,
 } from "@codemirror/view";
@@ -76,6 +77,9 @@ export class CodeEditor extends LitElement {
     @property({ attribute: false })
     value = Text.empty;
 
+    @property({ type: String })
+    placeholder = "";
+
     @property()
     language = "";
 
@@ -109,6 +113,9 @@ export class CodeEditor extends LitElement {
                 }
             }),
         ];
+        if (this.placeholder.length > 0) {
+            extensions.push(placeholder(this.placeholder));
+        }
         if (this.language === "json") {
             extensions.push(json());
         }

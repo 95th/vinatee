@@ -88,7 +88,7 @@ export class VinateeApp extends MobxLitElement {
         }
 
         const request: Request = {
-            url: this.requestState.url,
+            url: this.requestState.url.toString(),
             method: this.requestState.method,
             params: this.requestState.params.entries,
             headers: this.requestState.headers.entries,

@@ -105,7 +105,7 @@ export class RequestState {
     method = "GET";
 
     @observable
-    url = "https://google.com";
+    url = Text.of(["https://google.com"]);
 
     headers = new Properties();
     params = new Properties();
@@ -122,7 +122,7 @@ export class RequestState {
     }
 
     @action
-    setUrl(url: string) {
+    setUrl(url: Text) {
         this.url = url;
     }
 }

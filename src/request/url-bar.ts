@@ -1,9 +1,9 @@
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { consume } from "@lit/context";
 import { SelectValueChangedEvent } from "@vaadin/select";
-import { TextFieldValueChangedEvent } from "@vaadin/text-field";
-import { html } from "lit";
+import { css, html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { EditorTextChangedEvent } from "../components/events/EditorTextChangedEvent.js";
 import { RequestState, requestContext } from "./request-state.js";
 
 const methods = [
@@ -23,6 +23,15 @@ const methods = [
 
 @customElement("url-bar")
 export class UrlBar extends MobxLitElement {
+    static override styles = css`
+        code-editor {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    `;
+
     @consume({ context: requestContext })
     private state!: RequestState;
 
@@ -36,16 +45,12 @@ export class UrlBar extends MobxLitElement {
                     @value-changed=${this.onMethodChange}
                 >
                 </vaadin-select>
-                <vaadin-text-field
-                    style="flex-grow: 1"
+                <code-editor
                     placeholder="Enter URL"
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    value=${this.state.url}
-                    @value-changed=${this.onUrlChange}
-                ></vaadin-text-field>
+                    singleLine
+                    .value=${this.state.url}
+                    @change=${this.onUrlChange}
+                ></code-editor>
                 <vaadin-button
                     theme="primary"
                     style="cursor: pointer"
@@ -61,8 +66,8 @@ export class UrlBar extends MobxLitElement {
         this.state.setMethod(e.detail.value);
     }
 
-    private onUrlChange(e: TextFieldValueChangedEvent) {
-        this.state.setUrl(e.detail.value);
+    private onUrlChange(e: EditorTextChangedEvent) {
+        this.state.setUrl(e.detail);
     }
 
     private onSend() {
