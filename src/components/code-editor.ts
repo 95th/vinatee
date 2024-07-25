@@ -13,11 +13,43 @@ import {
     ViewUpdate,
 } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
-import { LitElement, PropertyValueMap, css, html } from "lit";
+import { css, html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
 import { EditorTextChangedEvent } from "./events/EditorTextChangedEvent.js";
 
 const REGEX_VARIABLE = /(\{[a-zA-Z_][a-zA-Z0-9-_]*\})/g;
+
+function highlightVariablePlugin() {
+    const matchDecorator = new MatchDecorator({
+        regexp: REGEX_VARIABLE,
+        decoration: Decoration.mark({
+            class: "cm-editor-variable",
+        }),
+    });
+
+    return ViewPlugin.fromClass(
+        class {
+            decorations: DecorationSet;
+
+            constructor(view: EditorView) {
+                this.decorations = matchDecorator.createDeco(view);
+            }
+
+            update(update: ViewUpdate) {
+                if (
+                    update.docChanged ||
+                    update.viewportChanged ||
+                    syntaxTree(update.startState) !== syntaxTree(update.state)
+                ) {
+                    this.decorations = matchDecorator.createDeco(update.view);
+                }
+            }
+        },
+        {
+            decorations: (v) => v.decorations,
+        }
+    );
+}
 
 @customElement("code-editor")
 export class CodeEditor extends LitElement {
@@ -53,6 +85,9 @@ export class CodeEditor extends LitElement {
     @property({ type: Boolean })
     readonly = false;
 
+    @property({ type: Boolean })
+    singleLine = false;
+
     @queryAsync("#editor-container")
     editorContainer!: Promise<HTMLElement>;
 
@@ -65,60 +100,37 @@ export class CodeEditor extends LitElement {
     }
 
     private initEditor(parent: HTMLElement) {
-        const matchDecorator = new MatchDecorator({
-            regexp: REGEX_VARIABLE,
-            decoration: Decoration.mark({
-                class: "cm-editor-variable",
-            }),
-        });
-
-        const highlightVariablePlugin = ViewPlugin.fromClass(
-            class {
-                decorations: DecorationSet;
-
-                constructor(view: EditorView) {
-                    this.decorations = matchDecorator.createDeco(view);
-                }
-
-                update(update: ViewUpdate) {
-                    if (
-                        update.docChanged ||
-                        update.viewportChanged ||
-                        syntaxTree(update.startState) !==
-                            syntaxTree(update.state)
-                    ) {
-                        this.decorations = matchDecorator.createDeco(
-                            update.view
-                        );
-                    }
-                }
-            },
-            {
-                decorations: (v) => v.decorations,
-            }
-        );
-
         const extensions = [
             minimalSetup,
-            lineNumbers(),
-            codeFolding(),
-            foldGutter({
-                openText: "⯆",
-                closedText: "⯈",
-            }),
-            this.lineWrapping.of(
-                this.wrapLines ? [EditorView.lineWrapping] : []
-            ),
+            highlightVariablePlugin(),
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
                     this.onChange(update.state.doc);
                 }
             }),
-            keymap.of([indentWithTab]),
-            highlightVariablePlugin,
         ];
         if (this.language === "json") {
             extensions.push(json());
+        }
+        if (this.singleLine) {
+            extensions.push(
+                EditorState.transactionFilter.of((tr) =>
+                    tr.newDoc.lines > 1 ? [] : tr
+                )
+            );
+        } else {
+            extensions.push(
+                lineNumbers(),
+                codeFolding(),
+                foldGutter({
+                    openText: "⯆",
+                    closedText: "⯈",
+                }),
+                keymap.of([indentWithTab]),
+                this.lineWrapping.of(
+                    this.wrapLines ? [EditorView.lineWrapping] : []
+                )
+            );
         }
         extensions.push(EditorState.readOnly.of(this.readonly));
         this.editorView = new EditorView({
