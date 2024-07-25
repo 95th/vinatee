@@ -16,6 +16,7 @@ import "@vaadin/tooltip";
 import "@vaadin/vertical-layout";
 
 import "./components/code-editor.js";
+import "./components/code-field.js";
 import "./components/properties-controls.js";
 import "./components/properties-panel.js";
 import "./components/property-row.js";

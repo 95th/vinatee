@@ -24,7 +24,7 @@ const methods = [
 @customElement("url-bar")
 export class UrlBar extends MobxLitElement {
     static override styles = css`
-        code-editor {
+        code-field {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -45,12 +45,11 @@ export class UrlBar extends MobxLitElement {
                     @value-changed=${this.onMethodChange}
                 >
                 </vaadin-select>
-                <code-editor
+                <code-field
                     placeholder="Enter URL"
-                    singleLine
                     .value=${this.state.url}
                     @change=${this.onUrlChange}
-                ></code-editor>
+                ></code-field>
                 <vaadin-button
                     theme="primary"
                     style="cursor: pointer"

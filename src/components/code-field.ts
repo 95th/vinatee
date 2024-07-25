@@ -1,20 +1,18 @@
-import { indentWithTab } from "@codemirror/commands";
-import { json } from "@codemirror/lang-json";
-import { codeFolding, foldGutter } from "@codemirror/language";
-import { Compartment, EditorState, Text } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import { EditorState, Text } from "@codemirror/state";
+import { EditorView, placeholder } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { css, html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
 import { highlightVariablePlugin } from "./highlightVariablePlugin.js";
 import { EditorTextChangedEvent } from "./events/EditorTextChangedEvent.js";
 
-@customElement("code-editor")
-export class CodeEditor extends LitElement {
+@customElement("code-field")
+export class CodeField extends LitElement {
     static override styles = css`
         .cm-editor,
         .cm-editor.cm-focused {
             outline: none;
+            border: 1px solid black;
         }
 
         .cm-content,
@@ -34,20 +32,13 @@ export class CodeEditor extends LitElement {
     @property({ attribute: false })
     value = Text.empty;
 
-    @property()
-    language = "";
-
-    @property({ type: Boolean, attribute: false })
-    wrapLines = false;
-
-    @property({ type: Boolean })
-    readonly = false;
+    @property({ type: String })
+    placeholder = "";
 
     @queryAsync("#editor-container")
     editorContainer!: Promise<HTMLElement>;
 
     private editorView?: EditorView;
-    private lineWrapping = new Compartment();
 
     override connectedCallback(): void {
         super.connectedCallback();
@@ -58,26 +49,18 @@ export class CodeEditor extends LitElement {
         const extensions = [
             minimalSetup,
             highlightVariablePlugin(),
-            lineNumbers(),
-            codeFolding(),
-            foldGutter({
-                openText: "⯆",
-                closedText: "⯈",
-            }),
-            keymap.of([indentWithTab]),
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
                     this.onChange(update.state.doc);
                 }
             }),
-            this.lineWrapping.of(
-                this.wrapLines ? [EditorView.lineWrapping] : []
+            EditorState.transactionFilter.of((tr) =>
+                tr.newDoc.lines > 1 ? [] : tr
             ),
         ];
-        if (this.language === "json") {
-            extensions.push(json());
+        if (this.placeholder.length > 0) {
+            extensions.push(placeholder(this.placeholder));
         }
-        extensions.push(EditorState.readOnly.of(this.readonly));
         this.editorView = new EditorView({
             doc: this.value,
             parent,
@@ -100,14 +83,6 @@ export class CodeEditor extends LitElement {
                     to: this.editorView.state.doc.length,
                     insert: this.value,
                 },
-            });
-        }
-
-        if (changedProps.has("wrapLines")) {
-            this.editorView?.dispatch({
-                effects: this.lineWrapping.reconfigure(
-                    this.wrapLines ? [EditorView.lineWrapping] : []
-                ),
             });
         }
     }
