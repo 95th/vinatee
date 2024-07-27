@@ -3,8 +3,8 @@ import { EditorView, placeholder } from "@codemirror/view";
 import { minimalSetup } from "codemirror";
 import { css, html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, queryAsync } from "lit/decorators.js";
-import { highlightVariablePlugin } from "./highlightVariablePlugin.js";
 import { EditorTextChangedEvent } from "./events/EditorTextChangedEvent.js";
+import { highlightVariablePlugin } from "./highlightVariablePlugin.js";
 
 @customElement("code-field")
 export class CodeField extends LitElement {
