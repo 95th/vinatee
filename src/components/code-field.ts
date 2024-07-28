@@ -12,7 +12,9 @@ export class CodeField extends LitElement {
         .cm-editor,
         .cm-editor.cm-focused {
             outline: none;
-            border: 1px solid black;
+            background-color: rgba(26, 57, 96, 0.1);
+            border-radius: 3px;
+            padding-top: 3px;
         }
 
         .cm-content,
