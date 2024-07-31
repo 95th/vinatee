@@ -12,23 +12,17 @@ export class CodeField extends LitElement {
         .cm-editor,
         .cm-editor.cm-focused {
             outline: none;
-            background-color: rgba(26, 57, 96, 0.1);
-            border-radius: 3px;
+            background-color: var(--lumo-shade-10pct);
+            border-radius: var(--lumo-border-radius-m);
         }
 
         .cm-content,
         .cm-scroller {
-            height: 27px;
+            height: var(--lumo-size-m);
             line-height: 1.7;
             font-family: var(--lumo-font-family);
-            font-size: var(
-                --vaadin-input-field-value-font-size,
-                var(--lumo-font-size-m)
-            );
-            color: var(
-                --vaadin-input-field-value-color,
-                var(--lumo-body-text-color)
-            );
+            font-size: var(--lumo-font-size-m);
+            color: var(--lumo-body-text-color);
         }
 
         .cm-editor-variable {
