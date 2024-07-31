@@ -14,12 +14,17 @@ export class CodeField extends LitElement {
             outline: none;
             background-color: rgba(26, 57, 96, 0.1);
             border-radius: 3px;
-            padding-top: 3px;
         }
 
         .cm-content,
         .cm-scroller {
+            height: 27px;
+            line-height: 1.7;
             font-family: var(--lumo-font-family);
+            font-size: var(
+                --vaadin-input-field-value-font-size,
+                var(--lumo-font-size-m)
+            );
             color: var(
                 --vaadin-input-field-value-color,
                 var(--lumo-body-text-color)
