@@ -19,7 +19,11 @@ export class CodeField extends LitElement {
 
         .cm-content,
         .cm-scroller {
-            font-family: Consolas, "SF Mono", "Fira Code", monospace;
+            font-family: var(--lumo-font-family);
+            color: var(
+                --vaadin-input-field-value-color,
+                var(--lumo-body-text-color)
+            );
         }
 
         .cm-editor-variable {
